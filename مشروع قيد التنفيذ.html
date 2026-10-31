@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="optes-preview" content='{"kind":"app","device":"desktop","title":"نظام إدارة وأتمتة العيادة الطبية","dir":"rtl","caption":"نظام إدارة وأتمتة العيادة الطبية — واجهة تجريبية","interactive":true}'>
+<title>نظام إدارة وأتمتة العيادة الطبية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4a;
+  --navy-2:#16385f;
+  --blue:#1e5aa8;
+  --sky:#38b6ff;
+  --sky-soft:#e8f6ff;
+  --white:#ffffff;
+  --bg:#f4f7fb;
+  --text:#1c2b3a;
+  --muted:#4a5a6a;
+  --border:#cbd5e1;
+  --green:#16a34a;
+  --red:#dc2626;
+  --amber:#d97706;
+  --shadow:0 4px 20px rgba(15,42,74,.15);
+  --radius:14px;
+  --arabic-font:'Cairo',Tahoma,sans-serif;
+  --latin-font:'Cairo',Tahoma,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body,input,select,textarea,button{
+  font-family:var(--arabic-font);
+  font-weight:600;
+}
+h1,h2,h3,h4,.section-title,.page-title,.card-title,.btn,.nav-link,.menu-item,.table th{
+  font-weight:700;
+}
+
+/* ===== التقويم الأسبوعي ===== */
+.week-calendar{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:var(--shadow);
+  margin-top:20px;
+}
+.week-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.week-nav{
+  display:flex;
+  gap:10px;
+}
+.week-nav button{
+  background:var(--navy);
+  color:var(--white);
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.week-nav button:hover{
+  background:var(--navy-2);
+}
+.week-title{
+  font-size:18px;
+  font-weight:600;
+  color:var(--navy);
+}
+.week-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:15px;
+}
+.week-day{
+  background:var(--sky-soft);
+  border-radius:12px;
+  padding:15px;
+  min-height:300px;
+  border:2px solid transparent;
+  transition:all 0.3s;
+}
+.week-day:hover{
+  border-color:var(--blue);
+  box-shadow:0 4px 12px rgba(30,90,168,0.15);
+}
+.week-day-header{
+  text-align:center;
+  margin-bottom:12px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--border);
+}
+.week-day-name{
+  font-weight:600;
+  color:var(--navy);
+  font-size:14px;
+}
+.week-day-date{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.week-day.has-appointments{
+  border-color:var(--blue);
+}
+.week-day.has-appointments .week-day-header{
+  background:var(--blue);
+  color:var(--white);
+  border-radius:8px;
+  margin-bottom:8px;
+}
+.appointment-slot{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:8px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-size:12px;
+}
+.appointment-slot:hover{
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  transform:translateY(-1px);
+}
+.appointment-slot.reserved{
+  background:var(--sky-soft);
+  border-color:var(--blue);
+}
+.appointment-slot.confirmed{
+  background:var(--green);
+  color:var(--white);
+  border-color:var(--green);
+}
+.appointment-slot.completed{
+  background:var(--muted);
+  color:var(--white);
+  border-color:var(--muted);
+}
+.appointment-slot.cancelled{
+  background:var(--red);
+  color:var(--white);
+  border-color:var(--red);
+}
+.appointment-slot.no-show{
+  background:var(--amber);
+  color:var(--white);
+  border-color:var(--amber);
+}
+.appointment-time{
+  font-weight:600;
+  font-size:11px;
+  margin-bottom:4px;
+}
+.appointment-patient{
+  font-size:11px;
+  color:var(--text);
+}
+.appointment-doctor{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.appointment-status{
+  display:inline-block;
+  padding:2px 6px;
+  border-radius:4px;
+  font-size:10px;
+  font-weight:600;
+  margin-top:4px;
+}
+.appointment-actions{
+  display:flex;
+  gap:4px;
+  margin-top:6px;
+}
+.appointment-actions button{
+  font-size:10px;
+  padding:2px 6px;
+  border-radius:4px;
+  border:none;
+  cursor:pointer;
+}
+.appointment-actions .btn-edit{
+  background:var(--blue);
+  color:var(--white);
+}
+.appointment-actions .btn-cancel{
+  background:var(--red);
+  color:var(--white);
+}
+.appointment-actions .btn-complete{
+  background:var(--green);
+  color:var(--white);
+}
+.appointment-actions .btn-move{
+  background:var(--amber);
+  color:var(--white);
+}
+.week-calendar .empty-state{
+  text-align:center;
+  color:var(--muted);
+  font-size:14px;
+  padding:40px 20px;
+}
+.week-calendar .empty-state span{
+  font-size:40px;
+  display:block;
+  margin-bottom:10px;
+}
+body{
+  font-family:'Cairo',Tahoma,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  font-weight:400;
+  line-height:1.6;
+}
+/* ===== الشريط العلوي ===== */
+.topbar{
+  position:fixed;top:0;right:0;left:0;height:64px;z-index:100;
+  background:linear-gradient(135deg,var(--navy),var(--navy-2));
+  color:#fff;display:flex;align-items:center;gap:16px;
+  padding:0 20px;box-shadow:0 2px 12px rgba(15,42,74,.25);
+}
+.topbar .logo{display:flex;align-items:center;gap:10px;min-width:230px}
+.topbar .logo .icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--sky),var(--blue));font-size:20px
+}
+.topbar .logo h1{font-size:16px;font-weight:700;line-height:1.2}
+.topbar .logo small{display:block;font-size:10px;color:#bcd6f0;font-weight:400}
+.topbar .search{flex:1;max-width:420px;position:relative}
+.topbar .search input{
+  width:100%;padding:10px 38px 10px 14px;border:none;border-radius:10px;
+  background:rgba(255,255,255,.12);color:#fff;font-family:inherit;font-size:13px;outline:none
+}
+.topbar .search input::placeholder{color:#bcd6f0}
+.topbar .search .s-ic{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#bcd6f0;font-size:14px}
+.topbar .right{display:flex;align-items:center;gap:14px;margin-right:auto}
+.topbar .date{font-size:12px;color:#bcd6f0;text-align:center;line-height:1.3}
+.topbar .bell{position:relative;cursor:pointer;font-size:18px;color:#dbe7f5}
+.topbar .bell .dot{position:absolute;top:-2px;left:-2px;width:9px;height:9px;background:var(--red);border-radius:50%;border:2px solid var(--navy)}
+.topbar .user{display:flex;align-items:center;gap:9px;cursor:pointer}
+.topbar .user .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--blue));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.topbar .user .u-info{line-height:1.2}
+.topbar .user .u-info b{font-size:13px;display:block}
+.topbar .user .u-info span{font-size:10px;color:#bcd6f0}
+/* ===== القائمة الجانبية ===== */
+.sidebar{
+  position:fixed;top:64px;right:0;bottom:0;width:250px;z-index:90;
+  background:var(--white);border-left:1px solid var(--border);
+  overflow-y:auto;padding:14px 10px;transition:transform .25s
+}
+.sidebar::-webkit-scrollbar{width:6px}
+.sidebar::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+.side-item{margin-bottom:3px}
+.side-item .head{
+  display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:10px;
+  cursor:pointer;font-size:14px;font-weight:600;color:var(--text);transition:.15s;user-select:none
+}
+.side-item .head:hover{background:var(--sky-soft);color:var(--blue)}
+.side-item .head .ic{width:22px;text-align:center;font-size:16px}
+.side-item .head .arrow{margin-right:auto;font-size:11px;transition:transform .2s;color:var(--muted)}
+.side-item.open .head .arrow{transform:rotate(180deg)}
+.side-item .head.active{background:linear-gradient(135deg,var(--blue),var(--navy-2));color:#fff}
+.side-item .sub{max-height:0;overflow:hidden;transition:max-height .25s}
+.side-item.open .sub{max-height:400px}
+.side-item .sub a{
+  display:flex;align-items:center;gap:9px;padding:9px 12px 9px 12px;margin:2px 0;
+  border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:none;transition:.15s
+}
+.side-item .sub a:hover{background:var(--sky-soft);color:var(--blue)}
+.side-item .sub a.active{background:var(--sky-soft);color:var(--blue);font-weight:600}
+.side-item .sub a .d{width:5px;height:5px;border-radius:50%;background:var(--sky);flex-shrink:0}
+.side-sep{height:1px;background:var(--border);margin:10px 8px}
+/* ===== المحتوى ===== */
+.main{margin-right:250px;margin-top:64px;padding:24px;min-height:calc(100vh - 64px)}
+.page{display:none;animation:fadeIn .25s}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.page-head h2{font-size:22px;font-weight:800;color:var(--navy)}
+.page-head .crumb{font-size:12px;color:var(--muted);margin-top:2px}
+.page-head .actions{display:flex;gap:10px}
+/* ===== البطاقات الإحصائية ===== */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+  border:1px solid var(--border);display:flex;align-items:center;gap:14px
+}
+.stat-card .s-ic{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.stat-card .s-ic.blue{background:var(--sky-soft);color:var(--blue)}
+.stat-card .s-ic.green{background:#e7f8ee;color:var(--green)}
+.stat-card .s-ic.amber{background:#fdf3e3;color:var(--amber)}
+.stat-card .s-ic.red{background:#fdeaea;color:var(--red)}
+.stat-card .s-info b{font-size:24px;font-weight:800;color:var(--navy);display:block}
+.stat-card .s-info span{font-size:12px;color:var(--muted)}
+/* ===== التبويبات ===== */
+.tabs{display:flex;gap:6px;border-bottom:2px solid var(--border);margin-bottom:20px;flex-wrap:wrap}
+.tab{
+  padding:10px 18px;border-radius:10px 10px 0 0;cursor:pointer;font-size:14px;font-weight:600;
+  color:var(--muted);border:1px solid transparent;border-bottom:none;transition:.15s;background:transparent
+}
+.tab:hover{color:var(--blue);background:var(--sky-soft)}
+.tab.active{color:var(--blue);background:var(--white);border-color:var(--border);border-bottom:2px solid var(--white);margin-bottom:-2px}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fadeIn .2s}
+/* ===== الجداول ===== */
+.table-wrap{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  background:var(--navy);color:#fff;padding:12px 14px;text-align:right;font-weight:600;white-space:nowrap
+}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover{background:var(--sky-soft)}
+tbody tr:last-child td{border-bottom:none}
+/* ===== الأزرار ===== */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;border:none;
+  font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;text-decoration:none
+}
+.btn-primary{background:linear-gradient(135deg,var(--blue),var(--navy-2));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-outline{background:var(--white);color:var(--blue);border:1.5px solid var(--blue)}
+.btn-outline:hover{background:var(--sky-soft)}
+.btn-danger{background:#fdeaea;color:var(--red)}
+.btn-danger:hover{background:#fbd5d5}
+.btn-success{background:#e7f8ee;color:var(--green)}
+.btn-success:hover{background:#d0f0dd}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{background:var(--bg)}
+/* ===== النماذج ===== */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:var(--navy)}
+.field label .req{color:var(--red)}
+.field input,.field select,.field textarea{
+  padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;
+  font-size:13px;outline:none;transition:.15s;background:var(--white);color:var(--text)
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,182,255,.15)}
+.field textarea{resize:vertical;min-height:70px}
+.field.full{grid-column:1/-1}
+.form-card{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:22px;margin-bottom:20px}
+.form-card h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.form-actions{display:flex;gap:10px;margin-top:18px;justify-content:flex-start}
+/* ===== الشارات ===== */
+.badge{display:inline-block;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700}
+.badge.blue{background:var(--sky-soft);color:var(--blue)}
+.badge.green{background:#e7f8ee;color:var(--green)}
+.badge.amber{background:#fdf3e3;color:var(--amber)}
+.badge.red{background:#fdeaea;color:var(--red)}
+.badge.gray{background:#eef1f5;color:var(--muted)}
+/* ===== النوافذ المنبثقة (Modal) ===== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,42,74,.5);z-index:200;display:none;
+  align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)
+}
+.modal-overlay.show{display:flex;animation:fadeIn .2s}
+.modal{
+  background:var(--white);border-radius:16px;width:100%;max-width:640px;max-height:90vh;
+  overflow-y:auto;box-shadow:0 20px 60px rgba(15,42,74,.3);animation:slideUp .25s
+}
+.modal.lg{max-width:820px}
+.modal.sm{max-width:420px}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:2}
+.modal-head h3{font-size:17px;font-weight:700;color:var(--navy)}
+.modal-close{width:32px;height:32px;border-radius:8px;border:none;background:var(--bg);cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:#fdeaea;color:var(--red)}
+.modal-body{padding:22px}
+.modal-foot{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-start}
+/* ===== تفاصيل المريض ===== */
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.detail-item{background:var(--bg);border-radius:10px;padding:12px 14px}
+.detail-item .lbl{font-size:11px;color:var(--muted);margin-bottom:3px}
+.detail-item .val{font-size:14px;font-weight:700;color:var(--navy)}
+/* ===== التنبيهات ===== */
+.alert{padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none;align-items:center;gap:9px}
+.alert.show{display:flex;animation:fadeIn .2s}
+.alert.success{background:#e7f8ee;color:var(--green);border:1px solid #b7e6c8}
+.alert.error{background:#fdeaea;color:var(--red);border:1px solid #f5c2c2}
+.alert.info{background:var(--sky-soft);color:var(--blue);border:1px solid #b9e2fb}
+/* ===== البحث ===== */
+.search-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.search-bar input,.search-bar select{
+  padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;outline:none
+}
+.search-bar input:focus,.search-bar select:focus{border-color:var(--blue)}
+.search-bar input[type=text]{flex:1;min-width:200px}
+/* ===== التقارير ===== */
+.chart-box{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);padding:20px;margin-bottom:20px}
+.chart-box h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:14px}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.bar-row .b-lbl{width:120px;font-size:12px;color:var(--muted);text-align:left}
+.bar-row .b-track{flex:1;background:var(--bg);border-radius:8px;height:26px;overflow:hidden}
+.bar-row .b-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--sky),var(--blue));display:flex;align-items:center;justify-content:flex-end;padding:0 8px;color:#fff;font-size:11px;font-weight:700;min-width:30px;transition:width .6s}
+/* ===== الإعدادات ===== */
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .s-info b{font-size:14px;color:var(--navy);display:block}
+.setting-row .s-info span{font-size:12px;color:var(--muted)}
+.switch{position:relative;width:46px;height:26px;background:#cbd5e1;border-radius:20px;cursor:pointer;transition:.2s;flex-shrink:0}
+.switch.on{background:var(--green)}
+.switch::after{content:'';position:absolute;top:3px;right:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s}
+.switch.on::after{right:23px}
+/* ===== استجابة ===== */
+.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+@media(max-width:900px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-right:0}
+  .menu-toggle{display:block}
+  .topbar .logo h1{font-size:13px}
+  .topbar .date{display:none}
+}
+@media print{
+  .topbar,.sidebar,.page-head .actions,.no-print{display:none!important}
+  .main{margin:0;padding:0}
+  body{background:#fff}
+}
+
+/* ===== صفحة تسجيل الدخول ===== */
+.login-page{
+  position:fixed;top:0;right:0;left:0;bottom:0;
+  background:linear-gradient(135deg,var(--navy),var(--navy-2));
+  display:flex;align-items:center;justify-content:center;
+  z-index:9999;
+}
+.login-card{
+  background:var(--white);
+  border-radius:var(--radius);
+  padding:40px;
+  width:100%;
+  max-width:400px;
+  box-shadow:var(--shadow);
+  text-align:center;
+}
+.login-header .login-icon{
+  font-size:48px;
+  margin-bottom:10px;
+}
+.login-header h2{
+  color:var(--navy);
+  font-size:24px;
+  margin-bottom:5px;
+}
+.login-header small{
+  color:var(--muted);
+  font-size:13px;
+  display:block;
+  margin-bottom:25px;
+}
+.login-page .form-group{
+  text-align:right;
+  margin-bottom:20px;
+}
+.login-page .form-group label{
+  display:block;
+  text-align:right;
+  margin-bottom:8px;
+  font-weight:700;
+  color:var(--text);
+}
+.login-page .form-group input{
+  width:100%;
+  padding:12px 15px;
+  border:2px solid var(--border);
+  border-radius:10px;
+  font-family:var(--arabic-font);
+  font-size:15px;
+  text-align:right;
+}
+.password-wrapper{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.password-wrapper input{
+  padding-right:45px;
+}
+.toggle-password{
+  position:absolute;
+  left:10px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:18px;
+  padding:5px;
+}
+.login-btn{
+  width:100%;
+  padding:14px;
+  background:var(--navy);
+  color:var(--white);
+  border:none;
+  border-radius:10px;
+  font-family:var(--arabic-font);
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .3s;
+}
+.login-btn:hover{
+  background:var(--navy-2);
+}
+.login-error{
+  color:var(--red);
+  font-size:13px;
+  margin-top:10px;
+  min-height:18px;
+}
+</style>
+</head>
+<body>
+<!-- ===== صفحة تسجيل الدخول ===== -->
+<div id="loginPage" class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-icon">⚕</div>
+      <h2>نظام العيادة الطبية</h2>
+      <small>Medical Clinic Management System</small>
+    </div>
+    <form id="loginForm" autocomplete="off">
+      <div class="form-group">
+        <label for="username">اسم المستخدم</label>
+        <input type="text" id="username" required autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <div class="password-wrapper">
+          <input type="password" id="password" required>
+          <button type="button" class="toggle-password" onclick="togglePassword()">👁</button>
+        </div>
+      </div>
+      <button type="submit" class="login-btn">تسجيل الدخول</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== محتوى النظام (مخفي حتى تسجيل الدخول) ===== -->
+<div id="appContent" style="display:none;">
+
+<!-- ===== الشريط العلوي ===== -->
+<header class="topbar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <div class="logo">
+    <div class="icon">⚕</div>
+    <div>
+      <h1>نظام العيادة الطبية</h1>
+      <small>Medical Clinic Management System</small>
+    </div>
+  </div>
+  <div class="search">
+    <span class="s-ic">🔍</span>
+    <input type="text" id="globalSearch" placeholder="بحث عام عن مريض بالاسم أو الرقم..." onkeyup="globalSearch(this.value)">
+  </div>
+  <div class="right">
+    <div class="date" id="todayDate"></div>
+    <div class="bell" onclick="showNotif()">🔔<span class="dot"></span></div>
+    <div class="user" onclick="openModal('userModal')">
+      <div class="avatar">م</div>
+      <div class="u-info"><b>مدير النظام</b><span>Admin</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== القائمة الجانبية ===== -->
+<nav class="sidebar" id="sidebar">
+  <div class="side-item open">
+    <div class="head active" onclick="toggleSub(this)"><span class="ic">🏠</span> الرئيسية ولوحة التحكم <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a class="active" onclick="showPage('dashboard')"><span class="d"></span> لوحة التحكم</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">👤</span> إدارة المرضى <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('patients')" data-tab="addPatient"><span class="d"></span> إدخال بيانات مريض</a>
+      <a onclick="showPage('patients')" data-tab="patientList"><span class="d"></span> قائمة المرضى</a>
+      <a onclick="showPage('patients')" data-tab="patientSearch"><span class="d"></span> البحث عن مريض</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">🩺</span> إدارة الأطباء <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('doctors')" data-tab="addDoctor"><span class="d"></span> إضافة طبيب</a>
+      <a onclick="showPage('doctors')" data-tab="doctorList"><span class="d"></span> قائمة الأطباء</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">📋</span> المراجعة الطبية <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('visits')" data-tab="newVisit"><span class="d"></span> زيارة جديدة</a>
+      <a onclick="showPage('visits')" data-tab="visitList"><span class="d"></span> قائمة الزيارات</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">🩹</span> الحالات المرضية <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('conditions')" data-tab="newCondition"><span class="d"></span> تسجيل حالة</a>
+      <a onclick="showPage('conditions')" data-tab="conditionList"><span class="d"></span> قائمة الحالات</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">📅</span> الحجوزات والمواعيد <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('appointments')" data-tab="newAppointment"><span class="d"></span> حجز موعد</a>
+      <a onclick="showPage('appointments')" data-tab="appointmentList"><span class="d"></span> قائمة الحجوزات</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">🗂️</span> الأرشيف الطبي <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('archive')" data-tab="archiveSearch"><span class="d"></span> البحث في الأرشيف</a>
+      <a onclick="showPage('archive')" data-tab="archivedRecords"><span class="d"></span> السجلات المؤرشفة</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">📊</span> التقارير والإحصائيات <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('reports')" data-tab="reportsMain"><span class="d"></span> التقارير</a>
+      <a onclick="showPage('reports')" data-tab="statsMain"><span class="d"></span> الإحصائيات</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">⚙️</span> الإدارة العامة <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('administration')" data-tab="adminSummary"><span class="d"></span> الملخص الإداري</a>
+      <a onclick="showPage('administration')" data-tab="adminNotes"><span class="d"></span> الملاحظات الإدارية</a>
+      <a onclick="showPage('administration')" data-tab="clinicData"><span class="d"></span> بيانات العيادة</a>
+    </div>
+  </div>
+
+  <div class="side-sep"></div>
+
+  <div class="side-item">
+    <div class="head" onclick="toggleSub(this)"><span class="ic">🔐</span> الإعدادات <span class="arrow">▼</span></div>
+    <div class="sub">
+      <a onclick="showPage('settings')" data-tab="settingsGeneral"><span class="d"></span> الإعدادات العامة</a>
+      <a onclick="showPage('settings')" data-tab="settingsUsers"><span class="d"></span> إدارة المستخدمين</a>
+    </div>
+  </div>
+
+  <div class="side-item">
+    <div class="head" onclick="logout()" style="color:var(--red)"><span class="ic">🚪</span> تسجيل الخروج</div>
+  </div>
+</nav>
+
+<!-- ===== المحتوى ===== -->
+<main class="main" id="main">
+
+  <!-- ============ لوحة التحكم ============ -->
+  <section class="page active" id="page-dashboard">
+    <div class="page-head">
+      <div>
+        <h2>لوحة التحكم</h2>
+        <div class="crumb">الرئيسية / لوحة التحكم</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="openModal('appointmentModal')">📅 حجز موعد</button>
+        <button class="btn btn-primary" onclick="showPage('patients')">➕ إضافة مريض</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="s-ic blue">👤</div><div class="s-info"><b>1,248</b><span>إجمالي المرضى</span></div></div>
+      <div class="stat-card"><div class="s-ic green">🩺</div><div class="s-info"><b>32</b><span>الأطباء</span></div></div>
+      <div class="stat-card"><div class="s-ic amber">📋</div><div class="s-info"><b>5,672</b><span>الزيارات الطبية</span></div></div>
+      <div class="stat-card"><div class="s-ic red">📅</div><div class="s-info"><b>48</b><span>حجوزات اليوم</span></div></div>
+    </div>
+
+    <div class="form-card">
+      <h3>📅 حجوزات اليوم</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>رقم الحجز</th><th>المريض</th><th>الطبيب</th><th>الوقت</th><th>السبب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>B-0048</td><td>أحمد محمد</td><td>د. سارة علي</td><td>09:00</td><td>فحص دوري</td><td><span class="badge blue">مؤكد</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('appointmentModal')">تفاصيل</button></td></tr>
+            <tr><td>B-0049</td><td>فاطمة حسن</td><td>د. خالد عمر</td><td>09:30</td><td>ألم في الأسنان</td><td><span class="badge amber">محجوز</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('appointmentModal')">تفاصيل</button></td></tr>
+            <tr><td>B-0050</td><td>علي كريم</td><td>د. سارة علي</td><td>10:00</td><td>متابعة ضغط الدم</td><td><span class="badge green">مكتمل</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('appointmentModal')">تفاصيل</button></td></tr>
+            <tr><td>B-0051</td><td>زينب عبدالله</td><td>د. محمد ناصر</td><td>10:30</td><td>استشارة</td><td><span class="badge red">ملغي</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('appointmentModal')">تفاصيل</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>🕒 آخر الزيارات</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>رقم الزيارة</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>التشخيص</th><th>الحالة</th></tr></thead>
+          <tbody>
+            <tr><td>V-5672</td><td>أحمد محمد</td><td>د. سارة علي</td><td>2026-10-21</td><td>ارتفاع ضغط الدم</td><td><span class="badge green">مكتملة</span></td></tr>
+            <tr><td>V-5671</td><td>فاطمة حسن</td><td>د. خالد عمر</td><td>2026-10-21</td><td>تسوس الأسنان</td><td><span class="badge blue">قيد المعالجة</span></td></tr>
+            <tr><td>V-5670</td><td>علي كريم</td><td>د. سارة علي</td><td>2026-10-20</td><td>متابعة</td><td><span class="badge green">مكتملة</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ إدارة المرضى ============ -->
+  <section class="page" id="page-patients">
+    <div class="page-head">
+      <div>
+        <h2>إدارة المرضى</h2>
+        <div class="crumb">الأقسام / إدارة المرضى</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-primary" onclick="switchTab('patients','addPatient')">➕ إدخال مريض جديد</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-patients">
+      <div class="tab active" data-tab="addPatient" onclick="switchTab('patients','addPatient')">إدخال بيانات مريض</div>
+      <div class="tab" data-tab="patientList" onclick="switchTab('patients','patientList')">قائمة المرضى</div>
+      <div class="tab" data-tab="patientSearch" onclick="switchTab('patients','patientSearch')">البحث عن مريض</div>
+    </div>
+
+    <!-- تبويب: إدخال مريض -->
+    <div class="tab-pane active" id="tab-addPatient">
+      <div class="alert success" id="patientAlert"></div>
+      <div class="form-card">
+        <h3>📝 بيانات المريض الجديد</h3>
+        <div class="form-grid">
+          <div class="field"><label>رقم المريض <span class="req">*</span></label><input type="text" value="P-1249" disabled style="background:var(--bg)"></div>
+          <div class="field"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="pName" placeholder="الاسم الثلاثي"></div>
+          <div class="field"><label>تاريخ الميلاد</label><input type="date" id="pBirth"></div>
+          <div class="field"><label>العمر</label><input type="number" id="pAge" min="0" max="120"></div>
+          <div class="field"><label>الجنس <span class="req">*</span></label>
+            <select id="pGender"><option value="">اختر...</option><option>ذكر</option><option>أنثى</option></select>
+          </div>
+          <div class="field"><label>رقم الهاتف</label><input type="tel" id="pPhone" placeholder="07xxxxxxxxx"></div>
+          <div class="field"><label>العنوان</label><input type="text" id="pAddress" placeholder="المحافظة"></div>
+          <div class="field"><label>البريد الإلكتروني</label><input type="email" id="pEmail" placeholder="example@mail.com"></div>
+          <div class="field"><label>فصيلة الدم</label>
+            <select id="pBlood"><option value="">اختر...</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select>
+          </div>
+          <div class="field full"><label>ملاحظات</label><textarea id="pNotes" placeholder="ملاحظات إضافية..."></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="savePatient()">💾 حفظ المريض</button>
+          <button class="btn btn-ghost" onclick="clearForm('patientForm')">🗑️ مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- تبويب: قائمة المرضى -->
+    <div class="tab-pane" id="tab-patientList">
+      <div class="search-bar">
+        <input type="text" placeholder="بحث بالاسم أو الرقم..." onkeyup="filterTable('patientTable',this.value)">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      </div>
+      <div class="table-wrap">
+        <table id="patientTable">
+          <thead><tr><th>رقم المريض</th><th>الاسم</th><th>العمر</th><th>الجنس</th><th>الهاتف</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>P-0001</td><td>أحمد محمد علي</td><td>45</td><td>ذكر</td><td>07701234567</td><td>2026-01-15</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('أحمد محمد علي','P-0001')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editPatient('P-0001')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deletePatient('P-0001')">🗑️ حذف</button></td></tr>
+            <tr><td>P-0002</td><td>فاطمة حسن كريم</td><td>32</td><td>أنثى</td><td>07709876543</td><td>2026-02-03</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('فاطمة حسن كريم','P-0002')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editPatient('P-0002')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deletePatient('P-0002')">🗑️ حذف</button></td></tr>
+            <tr><td>P-0003</td><td>علي كريم جاسم</td><td>58</td><td>ذكر</td><td>07801112233</td><td>2026-03-20</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('علي كريم جاسم','P-0003')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editPatient('P-0003')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deletePatient('P-0003')">🗑️ حذف</button></td></tr>
+            <tr><td>P-0004</td><td>زينب عبدالله سعد</td><td>27</td><td>أنثى</td><td>07904445566</td><td>2026-04-11</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('زينب عبدالله سعد','P-0004')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editPatient('P-0004')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deletePatient('P-0004')">🗑️ حذف</button></td></tr>
+            <tr><td>P-0005</td><td>حسين عباس نور</td><td>39</td><td>ذكر</td><td>07705556677</td><td>2026-05-02</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('حسين عباس نور','P-0005')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editPatient('P-0005')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deletePatient('P-0005')">🗑️ حذف</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- تبويب: البحث عن مريض -->
+    <div class="tab-pane" id="tab-patientSearch">
+      <div class="form-card">
+        <h3>🔍 البحث عن مريض</h3>
+        <div class="search-bar">
+          <input type="text" id="searchPatientInput" placeholder="أدخل اسم المريض أو رقمه (مثال: P-0001 أو أحمد)..." onkeyup="searchPatient()">
+          <button class="btn btn-primary" onclick="searchPatient()">بحث</button>
+        </div>
+        <div id="searchPatientResult"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ إدارة الأطباء ============ -->
+  <section class="page" id="page-doctors">
+    <div class="page-head">
+      <div>
+        <h2>إدارة الأطباء</h2>
+        <div class="crumb">الأقسام / إدارة الأطباء</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-primary" onclick="switchTab('doctors','addDoctor')">➕ إضافة طبيب</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-doctors">
+      <div class="tab active" data-tab="addDoctor" onclick="switchTab('doctors','addDoctor')">إضافة طبيب</div>
+      <div class="tab" data-tab="doctorList" onclick="switchTab('doctors','doctorList')">قائمة الأطباء</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-addDoctor">
+      <div class="alert success" id="doctorAlert"></div>
+      <div class="form-card">
+        <h3>🩺 بيانات الطبيب الجديد</h3>
+        <div class="form-grid">
+          <div class="field"><label>رقم الطبيب <span class="req">*</span></label><input type="text" value="D-0033" disabled style="background:var(--bg)"></div>
+          <div class="field"><label>الاسم الكامل <span class="req">*</span></label><input type="text" id="dName" placeholder="اسم الطبيب"></div>
+          <div class="field"><label>التخصص <span class="req">*</span></label>
+            <select id="dSpecialty"><option value="">اختر...</option><option>طب عام</option><option>أسنان</option><option>قلب</option><option>جلدية</option><option>أطفال</option><option>نسائية وتوليد</option><option>عظام</option><option>أنف وأذن وحنجرة</option><option>عيون</option><option>باطنية</option></select>
+          </div>
+          <div class="field"><label>رقم الهاتف</label><input type="tel" id="dPhone" placeholder="07xxxxxxxxx"></div>
+          <div class="field"><label>البريد الإلكتروني</label><input type="email" id="dEmail" placeholder="doctor@mail.com"></div>
+          <div class="field"><label>أوقات الدوام</label><input type="text" id="dHours" placeholder="مثال: 9ص - 2م"></div>
+          <div class="field"><label>الحالة الوظيفية</label>
+            <select id="dStatus"><option>نشط</option><option>غير نشط</option><option>في إجازة</option></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveDoctor()">💾 حفظ الطبيب</button>
+          <button class="btn btn-ghost" onclick="clearForm('doctorForm')">🗑️ مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-doctorList">
+      <div class="search-bar">
+        <input type="text" placeholder="بحث بالاسم أو التخصص..." onkeyup="filterTable('doctorTable',this.value)">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      </div>
+      <div class="table-wrap">
+        <table id="doctorTable">
+          <thead><tr><th>رقم الطبيب</th><th>الاسم</th><th>التخصص</th><th>الهاتف</th><th>أوقات الدوام</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>D-0001</td><td>د. سارة علي</td><td>طب عام</td><td>07701112233</td><td>9ص - 2م</td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openDoctorDetails('د. سارة علي','D-0001')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editDoctor('D-0001')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteDoctor('D-0001')">🗑️ حذف</button></td></tr>
+            <tr><td>D-0002</td><td>د. خالد عمر</td><td>أسنان</td><td>07702223344</td><td>10ص - 4م</td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openDoctorDetails('د. خالد عمر','D-0002')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editDoctor('D-0002')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteDoctor('D-0002')">🗑️ حذف</button></td></tr>
+            <tr><td>D-0003</td><td>د. محمد ناصر</td><td>قلب</td><td>07703334455</td><td>8ص - 1م</td><td><span class="badge amber">في إجازة</span></td><td><button class="btn btn-outline btn-sm" onclick="openDoctorDetails('د. محمد ناصر','D-0003')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editDoctor('D-0003')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteDoctor('D-0003')">🗑️ حذف</button></td></tr>
+            <tr><td>D-0004</td><td>د. ليلى حسن</td><td>جلدية</td><td>07704445566</td><td>2م - 8م</td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openDoctorDetails('د. ليلى حسن','D-0004')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editDoctor('D-0004')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteDoctor('D-0004')">🗑️ حذف</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ المراجعة الطبية ============ -->
+  <section class="page" id="page-visits">
+    <div class="page-head">
+      <div>
+        <h2>المراجعة الطبية</h2>
+        <div class="crumb">الأقسام / المراجعة الطبية</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-primary" onclick="switchTab('visits','newVisit')">➕ زيارة جديدة</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-visits">
+      <div class="tab active" data-tab="newVisit" onclick="switchTab('visits','newVisit')">زيارة جديدة</div>
+      <div class="tab" data-tab="visitList" onclick="switchTab('visits','visitList')">قائمة الزيارات</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-newVisit">
+      <div class="alert success" id="visitAlert"></div>
+      <div class="form-card">
+        <h3>📋 إنشاء زيارة طبية</h3>
+        <div class="form-grid">
+          <div class="field"><label>رقم الزيارة <span class="req">*</span></label><input type="text" value="V-5673" disabled style="background:var(--bg)"></div>
+          <div class="field"><label>المريض <span class="req">*</span></label>
+            <select id="vPatient"><option value="">اختر مريض...</option><option>P-0001 - أحمد محمد علي</option><option>P-0002 - فاطمة حسن كريم</option><option>P-0003 - علي كريم جاسم</option><option>P-0004 - زينب عبدالله سعد</option></select>
+          </div>
+          <div class="field"><label>الطبيب <span class="req">*</span></label>
+            <select id="vDoctor"><option value="">اختر طبيب...</option><option>D-0001 - د. سارة علي</option><option>D-0002 - د. خالد عمر</option><option>D-0003 - د. محمد ناصر</option><option>D-0004 - د. ليلى حسن</option></select>
+          </div>
+          <div class="field"><label>تاريخ الزيارة <span class="req">*</span></label><input type="date" id="vDate"></div>
+          <div class="field"><label>وقت الزيارة</label><input type="time" id="vTime"></div>
+          <div class="field"><label>سبب المراجعة</label><input type="text" id="vReason" placeholder="سبب المراجعة"></div>
+          <div class="field full"><label>الأعراض</label><textarea id="vSymptoms" placeholder="وصف الأعراض..."></textarea></div>
+          <div class="field full"><label>التشخيص</label><textarea id="vDiagnosis" placeholder="التشخيص المسجل من الطبيب..."></textarea></div>
+          <div class="field full"><label>خطة العلاج</label><textarea id="vTreatment" placeholder="خطة العلاج..."></textarea></div>
+          <div class="field full"><label>الملاحظات</label><textarea id="vNotes" placeholder="ملاحظات..."></textarea></div>
+          <div class="field"><label>حالة الزيارة</label>
+            <select id="vStatus"><option>بانتظار المراجعة</option><option>قيد المعالجة</option><option>مكتملة</option><option>تحتاج إلى متابعة</option></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveVisit()">💾 حفظ الزيارة</button>
+          <button class="btn btn-ghost" onclick="clearForm('visitForm')">🗑️ مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-visitList">
+      <div class="search-bar">
+        <input type="text" placeholder="بحث برقم الزيارة أو اسم المريض..." onkeyup="filterTable('visitTable',this.value)">
+        <select onchange="filterVisitStatus(this.value)"><option value="">كل الحالات</option><option>بانتظار المراجعة</option><option>قيد المعالجة</option><option>مكتملة</option><option>تحتاج إلى متابعة</option></select>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      </div>
+      <div class="table-wrap">
+        <table id="visitTable">
+          <thead><tr><th>رقم الزيارة</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>السبب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>V-5672</td><td>أحمد محمد علي</td><td>د. سارة علي</td><td>2026-10-21</td><td>فحص دوري</td><td><span class="badge green">مكتملة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5672')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5672')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5672')">🗑️ حذف</button></td></tr>
+            <tr><td>V-5671</td><td>فاطمة حسن كريم</td><td>د. خالد عمر</td><td>2026-10-21</td><td>ألم أسنان</td><td><span class="badge blue">قيد المعالجة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5671')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5671')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5671')">🗑️ حذف</button></td></tr>
+            <tr><td>V-5670</td><td>علي كريم جاسم</td><td>د. سارة علي</td><td>2026-10-20</td><td>متابعة ضغط</td><td><span class="badge green">مكتملة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5670')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5670')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5670')">🗑️ حذف</button></td></tr>
+            <tr><td>V-5669</td><td>زينب عبدالله سعد</td><td>د. محمد ناصر</td><td>2026-10-19</td><td>استشارة</td><td><span class="badge amber">بانتظار المراجعة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5669')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5669')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5669')">🗑️ حذف</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ الحالات المرضية ============ -->
+  <section class="page" id="page-conditions">
+    <div class="page-head">
+      <div>
+        <h2>الحالات المرضية</h2>
+        <div class="crumb">الأقسام / الحالات المرضية</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-primary" onclick="switchTab('conditions','newCondition')">➕ تسجيل حالة</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-conditions">
+      <div class="tab active" data-tab="newCondition" onclick="switchTab('conditions','newCondition')">تسجيل حالة</div>
+      <div class="tab" data-tab="conditionList" onclick="switchTab('conditions','conditionList')">قائمة الحالات</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-newCondition">
+      <div class="alert success" id="conditionAlert"></div>
+      <div class="form-card">
+        <h3>🩹 تسجيل حالة مرضية</h3>
+        <div class="form-grid">
+          <div class="field"><label>رقم الحالة <span class="req">*</span></label><input type="text" value="C-0001" disabled style="background:var(--bg)"></div>
+          <div class="field"><label>المريض <span class="req">*</span></label>
+            <select id="cPatient"><option value="">اختر مريض...</option><option>P-0001 - أحمد محمد علي</option><option>P-0002 - فاطمة حسن كريم</option><option>P-0003 - علي كريم جاسم</option></select>
+          </div>
+          <div class="field"><label>الزيارة المرتبطة</label>
+            <select id="cVisit"><option value="">بدون زيارة</option><option>V-5672</option><option>V-5671</option><option>V-5670</option></select>
+          </div>
+          <div class="field"><label>تاريخ تسجيل الحالة</label><input type="date" id="cDate"></div>
+          <div class="field full"><label>الأعراض</label><textarea id="cSymptoms" placeholder="الأعراض..."></textarea></div>
+          <div class="field full"><label>التشخيص</label><textarea id="cDiagnosis" placeholder="التشخيص المسجل من الطبيب..."></textarea></div>
+          <div class="field full"><label>خطة العلاج</label><textarea id="cTreatment" placeholder="خطة العلاج..."></textarea></div>
+          <div class="field full"><label>الملاحظات</label><textarea id="cNotes" placeholder="ملاحظات..."></textarea></div>
+          <div class="field"><label>حالة المتابعة</label>
+            <select id="cFollow"><option>قيد المتابعة</option><option>مستقر</option><option>تحسن</option><option>مكتمل</option></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveCondition()">💾 حفظ الحالة</button>
+          <button class="btn btn-ghost" onclick="clearForm('conditionForm')">🗑️ مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-conditionList">
+      <div class="search-bar">
+        <input type="text" placeholder="بحث برقم الحالة أو اسم المريض..." onkeyup="filterTable('conditionTable',this.value)">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      </div>
+      <div class="table-wrap">
+        <table id="conditionTable">
+          <thead><tr><th>رقم الحالة</th><th>المريض</th><th>التاريخ</th><th>التشخيص</th><th>حالة المتابعة</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>C-0001</td><td>أحمد محمد علي</td><td>2026-10-21</td><td>ارتفاع ضغط الدم</td><td><span class="badge blue">قيد المتابعة</span></td><td><button class="btn btn-outline btn-sm" onclick="openConditionDetails('C-0001')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editCondition('C-0001')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteCondition('C-0001')">🗑️ حذف</button></td></tr>
+            <tr><td>C-0002</td><td>فاطمة حسن كريم</td><td>2026-10-21</td><td>تسوس الأسنان</td><td><span class="badge amber">تحسن</span></td><td><button class="btn btn-outline btn-sm" onclick="openConditionDetails('C-0002')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editCondition('C-0002')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteCondition('C-0002')">🗑️ حذف</button></td></tr>
+            <tr><td>C-0003</td><td>علي كريم جاسم</td><td>2026-10-15</td><td>سكري من النوع الثاني</td><td><span class="badge green">مستقر</span></td><td><button class="btn btn-outline btn-sm" onclick="openConditionDetails('C-0003')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editCondition('C-0003')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteCondition('C-0003')">🗑️ حذف</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ الحجوزات والمواعيد ============ -->
+  <section class="page" id="page-appointments">
+    <div class="page-head">
+      <div>
+        <h2>الحجوزات والمواعيد</h2>
+        <div class="crumb">الأقسام / الحجوزات والمواعيد</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-primary" onclick="switchTab('appointments','newAppointment')">➕ حجز موعد</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-appointments">
+      <div class="tab active" data-tab="newAppointment" onclick="switchTab('appointments','newAppointment')">حجز موعد</div>
+      <div class="tab" data-tab="appointmentList" onclick="switchTab('appointments','appointmentList')">قائمة الحجوزات</div>
+      <div class="tab" data-tab="weekCalendar" onclick="switchTab('appointments','weekCalendar'); initWeekCalendar()">📅 التقويم الأسبوعي</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-newAppointment">
+      <div class="alert success" id="appointmentAlert"></div>
+      <div class="form-card" id="appointmentForm">
+        <h3>📅 حجز موعد جديد</h3>
+        <div class="form-grid">
+          <div class="field"><label>رقم الحجز <span class="req">*</span></label><input type="text" value="B-0052" disabled style="background:var(--bg)"></div>
+          <div class="field"><label>المريض <span class="req">*</span></label>
+            <select id="aPatient"><option value="">اختر مريض...</option><option>P-0001 - أحمد محمد علي</option><option>P-0002 - فاطمة حسن كريم</option><option>P-0003 - علي كريم جاسم</option><option>P-0004 - زينب عبدالله سعد</option></select>
+          </div>
+          <div class="field"><label>الطبيب <span class="req">*</span></label>
+            <select id="aDoctor"><option value="">اختر طبيب...</option><option>D-0001 - د. سارة علي</option><option>D-0002 - د. خالد عمر</option><option>D-0003 - د. محمد ناصر</option><option>D-0004 - د. ليلى حسن</option></select>
+          </div>
+          <div class="field"><label>تاريخ الموعد <span class="req">*</span></label><input type="date" id="aDate"></div>
+          <div class="field"><label>وقت الموعد <span class="req">*</span></label><input type="time" id="aTime"></div>
+          <div class="field"><label>سبب الحجز</label><input type="text" id="aReason" placeholder="سبب الحجز"></div>
+          <div class="field"><label>الحالة</label>
+            <select id="aStatus"><option>محجوز</option><option>مؤكد</option><option>مكتمل</option><option>ملغي</option><option>لم يحضر</option></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveAppointment()">💾 حفظ الحجز</button>
+          <button class="btn btn-ghost" onclick="clearForm('appointmentForm')">🗑️ مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-appointmentList">
+      <div class="search-bar">
+        <input type="text" placeholder="بحث برقم الحجز أو اسم المريض..." onkeyup="filterTable('appointmentTable',this.value)">
+        <input type="date" onchange="filterAppointmentDate(this.value)">
+        <select onchange="filterAppointmentStatus(this.value)"><option value="">كل الحالات</option><option>محجوز</option><option>مؤكد</option><option>مكتمل</option><option>ملغي</option><option>لم يحضر</option></select>
+        <button class="btn btn-outline" onclick="printAppointmentReport('daily')">📄 تقرير يومي</button>
+        <button class="btn btn-outline" onclick="printAppointmentReport('weekly')">📊 تقرير أسبوعي</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      </div>
+      <div class="table-wrap">
+        <table id="appointmentTable">
+          <thead><tr><th>رقم الحجز</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>الوقت</th><th>السبب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+          <tbody>
+            <tr><td>B-0048</td><td>أحمد محمد علي</td><td>د. سارة علي</td><td>2026-10-21</td><td>09:00</td><td>فحص دوري</td><td><span class="badge blue">مؤكد</span></td><td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('B-0048')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editAppointment('B-0048')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteAppointment('B-0048')">🗑️ حذف</button></td></tr>
+            <tr><td>B-0049</td><td>فاطمة حسن كريم</td><td>د. خالد عمر</td><td>2026-10-21</td><td>09:30</td><td>ألم أسنان</td><td><span class="badge amber">محجوز</span></td><td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('B-0049')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editAppointment('B-0049')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteAppointment('B-0049')">🗑️ حذف</button></td></tr>
+            <tr><td>B-0050</td><td>علي كريم جاسم</td><td>د. سارة علي</td><td>2026-10-21</td><td>10:00</td><td>متابعة ضغط</td><td><span class="badge green">مكتمل</span></td><td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('B-0050')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editAppointment('B-0050')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteAppointment('B-0050')">🗑️ حذف</button></td></tr>
+            <tr><td>B-0051</td><td>زينب عبدالله سعد</td><td>د. محمد ناصر</td><td>2026-10-21</td><td>10:30</td><td>استشارة</td><td><span class="badge red">ملغي</span></td><td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('B-0051')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editAppointment('B-0051')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteAppointment('B-0051')">🗑️ حذف</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-weekCalendar">
+      <div class="alert info" id="weekAlert"></div>
+      <div class="week-calendar">
+        <div class="week-header">
+          <div class="week-title" id="weekTitle">أسبوع الحالي</div>
+          <div class="week-nav">
+            <button onclick="moveWeek(-1)">◀ الأسبوع السابق</button>
+            <button onclick="moveWeek(0)">📅 هذا الأسبوع</button>
+            <button onclick="moveWeek(1)">الأسبوع القادم ▶</button>
+          </div>
+        </div>
+        <div class="week-grid" id="weekGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ الأرشيف الطبي ============ -->
+  <section class="page" id="page-archive">
+    <div class="page-head">
+      <div>
+        <h2>الأرشيف الطبي</h2>
+        <div class="crumb">الأقسام / الأرشيف الطبي</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-archive">
+      <div class="tab active" data-tab="archiveSearch" onclick="switchTab('archive','archiveSearch')">البحث في الأرشيف</div>
+      <div class="tab" data-tab="archivedRecords" onclick="switchTab('archive','archivedRecords')">السجلات المؤرشفة</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-archiveSearch">
+      <div class="form-card">
+        <h3>🗂️ البحث في الأرشيف الطبي</h3>
+        <div class="search-bar">
+          <input type="text" placeholder="رقم المريض، الاسم، رقم الزيارة، أو رقم الحالة..." id="archiveQuery">
+          <input type="date" placeholder="من تاريخ">
+          <input type="date" placeholder="إلى تاريخ">
+          <button class="btn btn-primary" onclick="searchArchive()">بحث</button>
+        </div>
+        <div id="archiveResult">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>النوع</th><th>الرقم</th><th>المريض</th><th>التاريخ</th><th>التفاصيل</th><th>إجراء</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge blue">زيارة</span></td><td>V-5660</td><td>أحمد محمد علي</td><td>2026-09-15</td><td>فحص دوري</td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5660')">عرض</button> <button class="btn btn-danger btn-sm" onclick="deleteArchive('V-5660')">🗑️ حذف</button></td></tr>
+                <tr><td><span class="badge amber">حالة</span></td><td>C-0003</td><td>علي كريم جاسم</td><td>2026-09-10</td><td>سكري</td><td><button class="btn btn-outline btn-sm" onclick="openConditionDetails('C-0003')">عرض</button> <button class="btn btn-danger btn-sm" onclick="deleteArchive('C-0003')">🗑️ حذف</button></td></tr>
+                <tr><td><span class="badge green">حجز</span></td><td>B-0030</td><td>فاطمة حسن كريم</td><td>2026-09-05</td><td>ألم أسنان</td><td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('B-0030')">عرض</button> <button class="btn btn-danger btn-sm" onclick="deleteArchive('B-0030')">🗑️ حذف</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-archivedRecords">
+      <div class="form-card">
+        <h3>📦 السجلات المؤرشفة</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>النوع</th><th>الرقم</th><th>الاسم</th><th>تاريخ الأرشفة</th><th>إجراء</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge gray">مريض</span></td><td>P-0100</td><td>سعد جاسم محمد</td><td>2026-08-01</td><td><button class="btn btn-success btn-sm" onclick="restoreRecord(this)">↩️ استرجاع</button></td></tr>
+              <tr><td><span class="badge gray">زيارة</span></td><td>V-5500</td><td>أحمد محمد علي</td><td>2026-07-20</td><td><button class="btn btn-success btn-sm" onclick="restoreRecord(this)">↩️ استرجاع</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ التقارير والإحصائيات ============ -->
+  <section class="page" id="page-reports">
+    <div class="page-head">
+      <div>
+        <h2>التقارير والإحصائيات</h2>
+        <div class="crumb">الأقسام / التقارير والإحصائيات</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+        <button class="btn btn-primary" onclick="exportCSV()">⬇️ تصدير CSV</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-reports">
+      <div class="tab active" data-tab="reportsMain" onclick="switchTab('reports','reportsMain')">التقارير</div>
+      <div class="tab" data-tab="statsMain" onclick="switchTab('reports','statsMain')">الإحصائيات</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-reportsMain">
+      <div class="search-bar">
+        <input type="date" placeholder="من تاريخ">
+        <input type="date" placeholder="إلى تاريخ">
+        <select><option>كل الأنواع</option><option>المرضى</option><option>الزيارات</option><option>الحجوزات</option><option>الحالات</option></select>
+        <button class="btn btn-primary" onclick="generateReport()">توليد التقرير</button>
+      </div>
+
+      <div class="form-card">
+        <h3>📊 تقرير الزيارات الطبية</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>رقم الزيارة</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>التشخيص</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td>V-5672</td><td>أحمد محمد علي</td><td>د. سارة علي</td><td>2026-10-21</td><td>ارتفاع ضغط الدم</td><td><span class="badge green">مكتملة</span></td></tr>
+              <tr><td>V-5671</td><td>فاطمة حسن كريم</td><td>د. خالد عمر</td><td>2026-10-21</td><td>تسوس الأسنان</td><td><span class="badge blue">قيد المعالجة</span></td></tr>
+              <tr><td>V-5670</td><td>علي كريم جاسم</td><td>د. سارة علي</td><td>2026-10-20</td><td>متابعة</td><td><span class="badge green">مكتملة</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-statsMain">
+      <div class="stats">
+        <div class="stat-card"><div class="s-ic blue">👤</div><div class="s-info"><b>1,248</b><span>مرضى مسجلين</span></div></div>
+        <div class="stat-card"><div class="s-ic green">📋</div><div class="s-info"><b>5,672</b><span>زيارات</span></div></div>
+        <div class="stat-card"><div class="s-ic amber">📅</div><div class="s-info"><b>3,890</b><span>حجوزات</span></div></div>
+        <div class="stat-card"><div class="s-ic red">🩹</div><div class="s-info"><b>1,120</b><span>حالات مرضية</span></div></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>📈 الزيارات الشهرية</h3>
+        <div class="bar-row"><div class="b-lbl">يناير</div><div class="b-track"><div class="b-fill" style="width:40%">320</div></div></div>
+        <div class="bar-row"><div class="b-lbl">فبراير</div><div class="b-track"><div class="b-fill" style="width:55%">440</div></div></div>
+        <div class="bar-row"><div class="b-lbl">مارس</div><div class="b-track"><div class="b-fill" style="width:48%">385</div></div></div>
+        <div class="bar-row"><div class="b-lbl">أبريل</div><div class="b-track"><div class="b-fill" style="width:62%">500</div></div></div>
+        <div class="bar-row"><div class="b-lbl">مايو</div><div class="b-track"><div class="b-fill" style="width:70%">560</div></div></div>
+        <div class="bar-row"><div class="b-lbl">يونيو</div><div class="b-track"><div class="b-fill" style="width:58%">465</div></div></div>
+        <div class="bar-row"><div class="b-lbl">يوليو</div><div class="b-track"><div class="b-fill" style="width:66%">530</div></div></div>
+        <div class="bar-row"><div class="b-lbl">أغسطس</div><div class="b-track"><div class="b-fill" style="width:74%">590</div></div></div>
+        <div class="bar-row"><div class="b-lbl">سبتمبر</div><div class="b-track"><div class="b-fill" style="width:80%">640</div></div></div>
+        <div class="bar-row"><div class="b-lbl">أكتوبر</div><div class="b-track"><div class="b-fill" style="width:88%">700</div></div></div>
+      </div>
+
+      <div class="chart-box">
+        <h3>👨‍⚕️ نشاط الأطباء</h3>
+        <div class="bar-row"><div class="b-lbl">د. سارة علي</div><div class="b-track"><div class="b-fill" style="width:85%">1,240</div></div></div>
+        <div class="bar-row"><div class="b-lbl">د. خالد عمر</div><div class="b-track"><div class="b-fill" style="width:70%">1,020</div></div></div>
+        <div class="bar-row"><div class="b-lbl">د. محمد ناصر</div><div class="b-track"><div class="b-fill" style="width:55%">800</div></div></div>
+        <div class="bar-row"><div class="b-lbl">د. ليلى حسن</div><div class="b-track"><div class="b-fill" style="width:65%">950</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ الإدارة العامة ============ -->
+  <section class="page" id="page-administration">
+    <div class="page-head">
+      <div>
+        <h2>الإدارة العامة والخدمات المساندة</h2>
+        <div class="crumb">الأقسام / الإدارة العامة</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-administration">
+      <div class="tab active" data-tab="adminSummary" onclick="switchTab('administration','adminSummary')">الملخص الإداري</div>
+      <div class="tab" data-tab="adminNotes" onclick="switchTab('administration','adminNotes')">الملاحظات الإدارية</div>
+      <div class="tab" data-tab="clinicData" onclick="switchTab('administration','clinicData')">بيانات العيادة</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-adminSummary">
+      <div class="stats">
+        <div class="stat-card"><div class="s-ic blue">📋</div><div class="s-info"><b>5,672</b><span>زيارات</span></div></div>
+        <div class="stat-card"><div class="s-ic green">📅</div><div class="s-info"><b>48</b><span>حجوزات اليوم</span></div></div>
+        <div class="stat-card"><div class="s-ic amber">🩹</div><div class="s-info"><b>1,120</b><span>حالات مرضية</span></div></div>
+        <div class="stat-card"><div class="s-ic red">🗂️</div><div class="s-info"><b>156</b><span>سجلات مؤرشفة</span></div></div>
+      </div>
+      <div class="form-card">
+        <h3>📋 متابعة السجلات</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>النوع</th><th>إجمالي</th><th>نشط</th><th>مؤرشف</th><th>آخر تحديث</th></tr></thead>
+            <tbody>
+              <tr><td>المرضى</td><td>1,248</td><td>1,092</td><td>156</td><td>2026-10-21</td></tr>
+              <tr><td>الأطباء</td><td>32</td><td>28</td><td>4</td><td>2026-10-21</td></tr>
+              <tr><td>الزيارات</td><td>5,672</td><td>5,600</td><td>72</td><td>2026-10-21</td></tr>
+              <tr><td>الحجوزات</td><td>3,890</td><td>3,800</td><td>90</td><td>2026-10-21</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-adminNotes">
+      <div class="alert success" id="adminNoteAlert"></div>
+      <div class="form-card">
+        <h3>📝 إضافة ملاحظة إدارية</h3>
+        <div class="form-grid">
+          <div class="field"><label>عنوان الملاحظة <span class="req">*</span></label><input type="text" id="anTitle" placeholder="عنوان الملاحظة"></div>
+          <div class="field"><label>الأولوية</label>
+            <select id="anPriority"><option>عادية</option><option>مهمة</option><option>عاجلة</option></select>
+          </div>
+          <div class="field full"><label>نص الملاحظة</label><textarea id="anText" placeholder="نص الملاحظة..."></textarea></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveAdminNote()">💾 حفظ الملاحظة</button>
+        </div>
+      </div>
+      <div class="form-card">
+        <h3>📌 الملاحظات الحالية</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>العنوان</th><th>الأولوية</th><th>التاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody>
+              <tr><td>صيانة جهاز الأشعة</td><td><span class="badge red">عاجلة</span></td><td>2026-10-20</td><td><span class="badge amber">قيد التنفيذ</span></td><td><button class="btn btn-success btn-sm" onclick="markDone(this)">✓ إنجاز</button></td></tr>
+              <tr><td>تحديث قائمة الأدوية</td><td><span class="badge amber">مهمة</span></td><td>2026-10-18</td><td><span class="badge amber">قيد التنفيذ</span></td><td><button class="btn btn-success btn-sm" onclick="markDone(this)">✓ إنجاز</button></td></tr>
+              <tr><td>مراجعة تقرير الشهر</td><td><span class="badge blue">عادية</span></td><td>2026-10-15</td><td><span class="badge green">منجزة</span></td><td><button class="btn btn-ghost btn-sm" disabled>✓ منجزة</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-clinicData">
+      <div class="alert success" id="clinicAlert"></div>
+      <div class="form-card">
+        <h3>🏥 بيانات العيادة الأساسية</h3>
+        <div class="form-grid">
+          <div class="field"><label>اسم العيادة <span class="req">*</span></label><input type="text" id="clName" value="عيادة النور الطبية"></div>
+          <div class="field"><label>رقم الهاتف</label><input type="tel" id="clPhone" value="07701112233"></div>
+          <div class="field"><label>العنوان</label><input type="text" id="clAddress" value="بغداد - الكرادة"></div>
+          <div class="field"><label>البريد الإلكتروني</label><input type="email" id="clEmail" value="info@alnoor-clinic.com"></div>
+          <div class="field"><label>ساعات العمل</label><input type="text" id="clHours" value="8ص - 8م"></div>
+          <div class="field"><label>أيام الدوام</label><input type="text" id="clDays" value="السبت - الخميس"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="saveClinicData()">💾 حفظ البيانات</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ الإعدادات ============ -->
+  <section class="page" id="page-settings">
+    <div class="page-head">
+      <div>
+        <h2>الإعدادات</h2>
+        <div class="crumb">الأقسام / الإعدادات</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-outline" onclick="showPage('dashboard')">↩️ رجوع</button>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs-settings">
+      <div class="tab active" data-tab="settingsGeneral" onclick="switchTab('settings','settingsGeneral')">الإعدادات العامة</div>
+      <div class="tab" data-tab="settingsUsers" onclick="switchTab('settings','settingsUsers')">إدارة المستخدمين</div>
+    </div>
+
+    <div class="tab-pane active" id="tab-settingsGeneral">
+      <div class="form-card">
+        <h3>⚙️ إعدادات النظام</h3>
+        <div class="setting-row">
+          <div class="s-info"><b>الوضع الليلي</b><span>تفعيل المظهر الداكن للنظام</span></div>
+          <div class="switch" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="setting-row">
+          <div class="s-info"><b>الإشعارات</b><span>استقبال إشعارات الحجوزات الجديدة</span></div>
+          <div class="switch on" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="setting-row">
+          <div class="s-info"><b>النسخ الاحتياطي التلقائي</b><span>حفظ نسخة من قاعدة البيانات يومياً</span></div>
+          <div class="switch on" onclick="toggleSwitch(this)"></div>
+        </div>
+        <div class="setting-row">
+          <div class="s-info"><b>اللغة</b><span>لغة واجهة النظام</span></div>
+          <select style="padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit"><option>العربية</option><option>English</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tab-settingsUsers">
+      <div class="form-card">
+        <h3>👥 إدارة المستخدمين</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>اسم المستخدم</th><th>الاسم الكامل</th><th>الدور</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody>
+              <tr><td>admin</td><td>مدير النظام</td><td><span class="badge red">Admin</span></td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('userModal')">تعديل</button></td></tr>
+              <tr><td>reception</td><td>موظفة الاستقبال</td><td><span class="badge blue">Receptionist</span></td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('userModal')">تعديل</button></td></tr>
+              <tr><td>dr.sara</td><td>د. سارة علي</td><td><span class="badge amber">Doctor</span></td><td><span class="badge green">نشط</span></td><td><button class="btn btn-outline btn-sm" onclick="openModal('userModal')">تعديل</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" onclick="openModal('userModal')">➕ إضافة مستخدم</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== نافذة تفاصيل المريض ===== -->
+<div class="modal-overlay" id="patientModal">
+  <div class="modal lg">
+    <div class="modal-head">
+      <h3>سجل المريض</h3>
+      <button class="modal-close" onclick="closeModal('patientModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="patientDetailInfo"></div>
+      <div class="tabs" id="tabs-patientDetail">
+        <div class="tab active" data-tab="pdInfo" onclick="switchTab('patientDetail','pdInfo')">المعلومات الشخصية</div>
+        <div class="tab" data-tab="pdHistory" onclick="switchTab('patientDetail','pdHistory')">التاريخ المرضي</div>
+        <div class="tab" data-tab="pdConditions" onclick="switchTab('patientDetail','pdConditions')">الحالات المرضية</div>
+        <div class="tab" data-tab="pdVisits" onclick="switchTab('patientDetail','pdVisits')">الزيارات السابقة</div>
+        <div class="tab" data-tab="pdPrescriptions" onclick="switchTab('patientDetail','pdPrescriptions')">العلاجات والوصفات</div>
+        <div class="tab" data-tab="pdNotes" onclick="switchTab('patientDetail','pdNotes')">الملاحظات</div>
+      </div>
+      <div class="tab-pane active" id="tab-pdInfo">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="lbl">الاسم الكامل</div><div class="val" id="pdName">أحمد محمد علي</div></div>
+          <div class="detail-item"><div class="lbl">رقم المريض</div><div class="val" id="pdCode">P-0001</div></div>
+          <div class="detail-item"><div class="lbl">تاريخ الميلاد</div><div class="val">1981-03-15</div></div>
+          <div class="detail-item"><div class="lbl">العمر</div><div class="val">45</div></div>
+          <div class="detail-item"><div class="lbl">الجنس</div><div class="val">ذكر</div></div>
+          <div class="detail-item"><div class="lbl">الهاتف</div><div class="val">07701234567</div></div>
+          <div class="detail-item"><div class="lbl">العنوان</div><div class="val">بغداد - المنصور</div></div>
+          <div class="detail-item"><div class="lbl">فصيلة الدم</div><div class="val">O+</div></div>
+          <div class="detail-item"><div class="lbl">تاريخ التسجيل</div><div class="val">2026-01-15</div></div>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-pdHistory">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>التاريخ</th><th>التشخيص</th><th>الطبيب</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td>2026-10-21</td><td>ارتفاع ضغط الدم</td><td>د. سارة علي</td><td><span class="badge green">مكتملة</span></td></tr>
+              <tr><td>2026-08-15</td><td>متابعة دورية</td><td>د. سارة علي</td><td><span class="badge green">مكتملة</span></td></tr>
+              <tr><td>2026-05-02</td><td>التهاب الجيوب</td><td>د. محمد ناصر</td><td><span class="badge green">مكتملة</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-pdConditions">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>رقم الحالة</th><th>التشخيص</th><th>التاريخ</th><th>حالة المتابعة</th></tr></thead>
+            <tbody>
+              <tr><td>C-0001</td><td>ارتفاع ضغط الدم</td><td>2026-10-21</td><td><span class="badge blue">قيد المتابعة</span></td></tr>
+              <tr><td>C-0005</td><td>التهاب الجيوب</td><td>2026-05-02</td><td><span class="badge green">مكتمل</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-pdVisits">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>رقم الزيارة</th><th>التاريخ</th><th>الطبيب</th><th>السبب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody>
+              <tr><td>V-5672</td><td>2026-10-21</td><td>د. سارة علي</td><td>فحص دوري</td><td><span class="badge green">مكتملة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5672')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5672')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5672')">🗑️ حذف</button></td></tr>
+              <tr><td>V-5600</td><td>2026-08-15</td><td>د. سارة علي</td><td>متابعة</td><td><span class="badge green">مكتملة</span></td><td><button class="btn btn-outline btn-sm" onclick="openVisitDetails('V-5600')">عرض</button> <button class="btn btn-blue btn-sm" onclick="editVisit('V-5600')">✏️ تعديل</button> <button class="btn btn-danger btn-sm" onclick="deleteVisit('V-5600')">🗑️ حذف</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-pdPrescriptions">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>رقم الوصفة</th><th>الدواء</th><th>الجرعة</th><th>التكرار</th><th>المدة</th></tr></thead>
+            <tbody>
+              <tr><td>R-1001</td><td>أملوديبين</td><td>5 ملغ</td><td>مرة يومياً</td><td>30 يوم</td></tr>
+              <tr><td>R-1002</td><td>باراسيتامول</td><td>500 ملغ</td><td>3 مرات يومياً</td><td>7 أيام</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane" id="tab-pdNotes">
+        <div class="form-card" style="box-shadow:none;border:none;padding:0">
+          <div class="field"><label>إضافة ملاحظة</label><textarea id="pdNoteText" placeholder="اكتب ملاحظة جديدة..."></textarea></div>
+          <div class="form-actions"><button class="btn btn-primary btn-sm" onclick="addPatientNote()">➕ إضافة</button></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>التاريخ</th><th>الملاحظة</th></tr></thead>
+            <tbody id="pdNotesBody">
+              <tr><td>2026-10-21</td><td>يحتاج متابعة ضغط الدم شهرياً</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('patientModal')">↩️ رجوع</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== نافذة تفاصيل الزيارة ===== -->
+<div class="modal-overlay" id="visitModal">
+  <div class="modal lg">
+    <div class="modal-head">
+      <h3>تفاصيل الزيارة</h3>
+      <button class="modal-close" onclick="closeModal('visitModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="lbl">رقم الزيارة</div><div class="val">V-5672</div></div>
+        <div class="detail-item"><div class="lbl">المريض</div><div class="val">أحمد محمد علي</div></div>
+        <div class="detail-item"><div class="lbl">الطبيب</div><div class="val">د. سارة علي</div></div>
+        <div class="detail-item"><div class="lbl">التاريخ</div><div class="val">2026-10-21</div></div>
+        <div class="detail-item"><div class="lbl">الوقت</div><div class="val">10:30</div></div>
+        <div class="detail-item"><div class="lbl">سبب المراجعة</div><div class="val">فحص دوري</div></div>
+        <div class="detail-item"><div class="lbl">الحالة</div><div class="val"><span class="badge green">مكتملة</span></div></div>
+      </div>
+      <div class="form-card" style="box-shadow:none;border:1px solid var(--border)">
+        <h3>🩺 تفاصيل طبية</h3>
+        <div class="form-grid">
+          <div class="field full"><label>الأعراض</label><div class="val" style="font-size:13px;color:var(--text)">صداع مستمر، دوخة خفيفة</div></div>
+          <div class="field full"><label>التشخيص</label><div class="val" style="font-size:13px;color:var(--text)">ارتفاع ضغط الدم (المرحلة الأولى)</div></div>
+          <div class="field full"><label>خطة العلاج</label><div class="val" style="font-size:13px;color:var(--text)">تناول أملوديبين 5 ملغ يومياً، تقليل الملح، متابعة شهرية</div></div>
+          <div class="field full"><label>الملاحظات</label><div class="val" style="font-size:13px;color:var(--text)">يحتاج متابعة ضغط الدم شهرياً</div></div>
+        </div>
+      </div>
+      <div class="form-card" style="box-shadow:none;border:1px solid var(--border)">
+        <h3>💊 الوصفات المرتبطة</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>الدواء</th><th>الجرعة</th><th>التكرار</th><th>المدة</th></tr></thead>
+            <tbody>
+              <tr><td>أملوديبين</td><td>5 ملغ</td><td>مرة يومياً</td><td>30 يوم</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('visitModal')">↩️ رجوع</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ طباعة</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== نافذة تفاصيل الحالة ===== -->
+<div class="modal-overlay" id="conditionModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>تفاصيل الحالة المرضية</h3>
+      <button class="modal-close" onclick="closeModal('conditionModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="lbl">رقم الحالة</div><div class="val">C-0001</div></div>
+        <div class="detail-item"><div class="lbl">المريض</div><div class="val">أحمد محمد علي</div></div>
+        <div class="detail-item"><div class="lbl">التاريخ</div><div class="val">2026-10-21</div></div>
+        <div class="detail-item"><div class="lbl">حالة المتابعة</div><div class="val"><span class="badge blue">قيد المتابعة</span></div></div>
+      </div>
+      <div class="form-card" style="box-shadow:none;border:1px solid var(--border)">
+        <div class="form-grid">
+          <div class="field full"><label>الأعراض</label><div class="val" style="font-size:13px">صداع، دوخة</div></div>
+          <div class="field full"><label>التشخيص</label><div class="val" style="font-size:13px">ارتفاع ضغط الدم</div></div>
+          <div class="field full"><label>خطة العلاج</label><div class="val" style="font-size:13px">أملوديبين 5 ملغ يومياً</div></div>
+          <div class="field full"><label>الملاحظات</label><div class="val" style="font-size:13px">متابعة شهرية</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('conditionModal')">↩️ رجوع</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== نافذة تفاصيل الحجز ===== -->
+<div class="modal-overlay" id="appointmentModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>تفاصيل الحجز</h3>
+      <button class="modal-close" onclick="closeModal('appointmentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="lbl">رقم الحجز</div><div class="val">B-0048</div></div>
+        <div class="detail-item"><div class="lbl">المريض</div><div class="val">أحمد محمد علي</div></div>
+        <div class="detail-item"><div class="lbl">الطبيب</div><div class="val">د. سارة علي</div></div>
+        <div class="detail-item"><div class="lbl">التاريخ</div><div class="val">2026-10-21</div></div>
+        <div class="detail-item"><div class="lbl">الوقت</div><div class="val">09:00</div></div>
+        <div class="detail-item"><div class="lbl">السبب</div><div class="val">فحص دوري</div></div>
+        <div class="detail-item"><div class="lbl">الحالة</div><div class="val"><span class="badge blue">مؤكد</span></div></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('appointmentModal')">↩️ رجوع</button>
+      <button class="btn btn-danger" onclick="closeModal('appointmentModal')">🗑️ إلغاء الحجز</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== نافذة المستخدم ===== -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal sm">
+    <div class="modal-head">
+      <h3>إدارة المستخدم</h3>
+      <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>اسم المستخدم <span class="req">*</span></label><input type="text" placeholder="username"></div>
+        <div class="field"><label>الاسم الكامل <span class="req">*</span></label><input type="text" placeholder="الاسم الكامل"></div>
+        <div class="field"><label>الدور <span class="req">*</span></label>
+          <select><option>Admin</option><option>Receptionist</option><option>Doctor</option><option>Reports</option></select>
+        </div>
+        <div class="field"><label>كلمة المرور</label><input type="password" placeholder="••••••••"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-primary" onclick="closeModal('userModal')">💾 حفظ</button>
+      <button class="btn btn-ghost" onclick="closeModal('userModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== التنقل بين الصفحات =====
+function showPage(pageId){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+pageId).classList.add('active');
+  // تحديث القائمة الجانبية
+  document.querySelectorAll('.side-item .head').forEach(h=>h.classList.remove('active'));
+  document.querySelectorAll('.side-item .sub a').forEach(a=>a.classList.remove('active'));
+  // إغلاق القائمة على الموبايل
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo(0,0);
+}
+
+// ===== فتح/إغلاق الأقسام في القائمة الجانبية =====
+function toggleSub(el){
+  const item = el.closest('.side-item');
+  item.classList.toggle('open');
+}
+
+// ===== تبديل التبويبات =====
+function switchTab(group, tabId){
+  // تحديث التبويبات الرئيسية
+  const tabsWrap = document.getElementById('tabs-'+group);
+  if(tabsWrap){
+    tabsWrap.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tabId));
+  }
+  // تحديث المحتوى
+  document.querySelectorAll('#tab-'+tabId).forEach(p=>p.classList.add('active'));
+  document.querySelectorAll('#tab-'+tabId).forEach(p=>{
+    document.querySelectorAll('.tab-pane').forEach(x=>{
+      if(x.id==='tab-'+tabId) x.classList.add('active');
+    });
+  });
+  // إخفاء باقي التبويبات في نفس المجموعة
+  const groupTabs = document.querySelectorAll('#tabs-'+group+' .tab');
+  groupTabs.forEach(t=>{
+    const tid = t.dataset.tab;
+    document.querySelectorAll('#tab-'+tid).forEach(p=>{
+      if(tid!==tabId) p.classList.remove('active');
+    });
+  });
+}
+
+// ===== النوافذ المنبثقة =====
+function openModal(id){
+  document.getElementById(id).classList.add('show');
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('show');
+}
+// إغلاق بالنقر خارج النافذة
+document.querySelectorAll('.modal-overlay').forEach(ov=>{
+  ov.addEventListener('click', e=>{
+    if(e.target===ov) ov.classList.remove('show');
+  });
+});
+
+// ===== فتح تفاصيل المريض =====
+function openPatientDetails(name, code){
+  document.getElementById('pdName').textContent = name;
+  document.getElementById('pdCode').textContent = code;
+  openModal('patientModal');
+}
+
+// ===== حفظ البيانات (تجريبي) =====
+function savePatient(){
+  const name = document.getElementById('pName').value.trim();
+  const gender = document.getElementById('pGender').value;
+  if(!name){ showAlert('patientAlert','يرجى إدخال اسم المريض','error'); return; }
+  if(!gender){ showAlert('patientAlert','يرجى اختيار الجنس','error'); return; }
+  showAlert('patientAlert','تم حفظ بيانات المريض بنجاح ✓','success');
+  clearForm('patientForm');
+}
+function saveDoctor(){
+  const name = document.getElementById('dName').value.trim();
+  const spec = document.getElementById('dSpecialty').value;
+  if(!name){ showAlert('doctorAlert','يرجى إدخال اسم الطبيب','error'); return; }
+  if(!spec){ showAlert('doctorAlert','يرجى اختيار التخصص','error'); return; }
+  showAlert('doctorAlert','تم حفظ بيانات الطبيب بنجاح ✓','success');
+  clearForm('doctorForm');
+}
+function saveVisit(){
+  const patient = document.getElementById('vPatient').value;
+  const doctor = document.getElementById('vDoctor').value;
+  const date = document.getElementById('vDate').value;
+  if(!patient){ showAlert('visitAlert','يرجى اختيار المريض','error'); return; }
+  if(!doctor){ showAlert('visitAlert','يرجى اختيار الطبيب','error'); return; }
+  if(!date){ showAlert('visitAlert','يرجى تحديد تاريخ الزيارة','error'); return; }
+  showAlert('visitAlert','تم حفظ الزيارة بنجاح ✓','success');
+  clearForm('visitForm');
+}
+function saveCondition(){
+  const patient = document.getElementById('cPatient').value;
+  if(!patient){ showAlert('conditionAlert','يرجى اختيار المريض','error'); return; }
+  showAlert('conditionAlert','تم تسجيل الحالة المرضية بنجاح ✓','success');
+  clearForm('conditionForm');
+}
+function saveAppointment(){
+  saveAppointmentFromForm();
+}
+function saveAdminNote(){
+  const title = document.getElementById('anTitle').value.trim();
+  if(!title){ showAlert('adminNoteAlert','يرجى إدخال عنوان الملاحظة','error'); return; }
+  showAlert('adminNoteAlert','تم حفظ الملاحظة الإدارية بنجاح ✓','success');
+  document.getElementById('anTitle').value='';
+  document.getElementById('anText').value='';
+}
+function saveClinicData(){
+  const name = document.getElementById('clName').value.trim();
+  if(!name){ showAlert('clinicAlert','يرجى إدخال اسم العيادة','error'); return; }
+  showAlert('clinicAlert','تم حفظ بيانات العيادة بنجاح ✓','success');
+}
+
+// ===== عرض التنبيهات =====
+function showAlert(id, msg, type){
+  const el = document.getElementById(id);
+  el.className = 'alert show '+type;
+  el.textContent = msg;
+  setTimeout(()=>el.classList.remove('show'), 3500);
+}
+
+// ===== مسح النماذج =====
+function clearForm(formId){
+  const form = document.getElementById(formId);
+  if(form){
+    form.querySelectorAll('input:not([disabled]), textarea, select').forEach(f=>{
+      if(f.type==='checkbox') f.checked=false;
+      else f.value='';
+    });
+  }
+}
+
+// ===== تصفية الجداول =====
+function filterTable(tableId, query){
+  const table = document.getElementById(tableId);
+  const rows = table.querySelectorAll('tbody tr');
+  const q = query.toLowerCase();
+  rows.forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+function filterVisitStatus(status){
+  const table = document.getElementById('visitTable');
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row=>{
+    const cell = row.cells[5].textContent;
+    row.style.display = (!status || cell.includes(status)) ? '' : 'none';
+  });
+}
+function filterAppointmentStatus(status){
+  const table = document.getElementById('appointmentTable');
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row=>{
+    const cell = row.cells[6].textContent;
+    row.style.display = (!status || cell.includes(status)) ? '' : 'none';
+  });
+}
+function filterAppointmentDate(date){
+  const table = document.getElementById('appointmentTable');
+  const rows = table.querySelectorAll('tbody tr');
+  rows.forEach(row=>{
+    const cell = row.cells[3].textContent;
+    row.style.display = (!date || cell===date) ? '' : 'none';
+  });
+}
+
+// ===== البحث عن مريض =====
+function searchPatient(){
+  const q = document.getElementById('searchPatientInput').value.trim();
+  const result = document.getElementById('searchPatientResult');
+  if(!q){ result.innerHTML = '<div class="alert info show">أدخل اسم المريض أو رقمه للبحث</div>'; return; }
+  // محاكاة بحث (تجريبي)
+  const found = [
+    {code:'P-0001', name:'أحمد محمد علي', age:45, phone:'07701234567'},
+    {code:'P-0002', name:'فاطمة حسن كريم', age:32, phone:'07709876543'}
+  ].filter(p=>p.name.includes(q) || p.code.toLowerCase().includes(q.toLowerCase()));
+  if(found.length===0){
+    result.innerHTML = '<div class="alert error show">لا توجد نتائج مطابقة للبحث</div>';
+  }else{
+    let html = '<div class="table-wrap"><table><thead><tr><th>الرقم</th><th>الاسم</th><th>العمر</th><th>الهاتف</th><th>إجراء</th></tr></thead><tbody>';
+    found.forEach(p=>{
+      html += `<tr><td>${p.code}</td><td>${p.name}</td><td>${p.age}</td><td>${p.phone}</td><td><button class="btn btn-outline btn-sm" onclick="openPatientDetails('${p.name}','${p.code}')">عرض</button></td></tr>`;
+    });
+    html += '</tbody></table></div>';
+    result.innerHTML = html;
+  }
+}
+
+// ===== البحث في الأرشيف =====
+function searchArchive(){
+  const q = document.getElementById('archiveQuery').value.trim();
+  const result = document.getElementById('archiveResult');
+  if(!q){ result.innerHTML = '<div class="alert info show">أدخل رقم المريض أو الاسم أو رقم الزيارة للبحث في الأرشيف</div>'; return; }
+  result.innerHTML = '<div class="alert success show">تم العثور على نتائج مطابقة ✓ (تجريبي)</div>';
+}
+
+// ===== استرجاع سجل مؤرشف =====
+function restoreRecord(btn){
+  btn.closest('tr').style.opacity='0.4';
+  btn.textContent='✓ تم الاسترجاع';
+  btn.disabled=true;
+}
+
+// ===== إنجاز ملاحظة إدارية =====
+function markDone(btn){
+  btn.closest('tr').querySelectorAll('.badge').forEach(b=>{
+    b.className='badge green'; b.textContent='منجزة';
+  });
+  btn.textContent='✓ منجزة'; btn.disabled=true;
+}
+
+// ===== إضافة ملاحظة للمريض =====
+function addPatientNote(){
+  const text = document.getElementById('pdNoteText').value.trim();
+  if(!text) return;
+  const body = document.getElementById('pdNotesBody');
+  const today = new Date().toISOString().split('T')[0];
+  const row = document.createElement('tr');
+  row.innerHTML = `<td>${today}</td><td>${text}</td>`;
+  body.prepend(row);
+  document.getElementById('pdNoteText').value='';
+}
+
+// ===== المفاتيح (Switch) =====
+function toggleSwitch(el){
+  el.classList.toggle('on');
+}
+
+// ===== البحث العام =====
+function globalSearch(q){
+  if(q.trim().length>0){
+    // محاكاة: يفتح صفحة البحث عن مريض
+    document.getElementById('searchPatientInput').value = q;
+    showPage('patients');
+    switchTab('patients','patientSearch');
+    searchPatient();
+  }
+}
+
+// ===== تصدير CSV =====
+function exportCSV(){
+  const table = document.querySelector('#page-reports table');
+  if(!table) return;
+  let csv = [];
+  table.querySelectorAll('tr').forEach(row=>{
+    let cells = [];
+    row.querySelectorAll('th,td').forEach(c=>cells.push('"'+c.textContent.trim()+'"'));
+    csv.push(cells.join(','));
+  });
+  const blob = new Blob([csv.join('\n')], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'report.csv';
+  a.click();
+}
+
+// ===== توليد تقرير =====
+function generateReport(){
+  alert('تم توليد التقرير (تجريبي) — سيتم ربطه بقاعدة البيانات لاحقاً');
+}
+
+// ===== تسجيل الخروج =====
+function logout(){
+  if(confirm('هل تريد تسجيل الخروج من النظام؟')){
+    localStorage.removeItem('clinic_logged_in');
+    document.getElementById('appContent').style.display='none';
+    document.getElementById('loginPage').style.display='flex';
+    document.getElementById('username').value='';
+    document.getElementById('password').value='';
+    document.querySelector('.toggle-password').textContent='👁';
+    document.getElementById('password').type='password';
+  }
+}
+
+// ===== الإشعارات =====
+function showNotif(){
+  alert('لديك 3 إشعارات جديدة (تجريبي)');
+}
+
+// ===== تفاصيل الزيارة =====
+function openVisitDetails(id){
+  alert('تفاصيل الزيارة ' + id + ' (تجريبي)');
+}
+
+// ===== تفاصيل الطبيب =====
+function openDoctorDetails(name, id){
+  alert('تفاصيل الطبيب ' + name + ' (' + id + ') (تجريبي)');
+}
+
+// ===== تفاصيل الحالة المرضية =====
+function openConditionDetails(id){
+  alert('تفاصيل الحالة المرضية ' + id + ' (تجريبي)');
+}
+
+// ===== نظام تسجيل الدخول =====
+function togglePassword(){
+  const pw = document.getElementById('password');
+  const btn = document.querySelector('.toggle-password');
+  if(pw.type==='password'){
+    pw.type='text';
+    btn.textContent='🙈';
+  }else{
+    pw.type='password';
+    btn.textContent='👁';
+  }
+}
+function doLogin(e){
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const errorEl = document.querySelector('.login-error');
+  if(errorEl) errorEl.textContent='';
+  // معرفات بسيطة (يمكن تعديلها في production)
+  const VALID_USERS = [
+    {user:'admin', pass:'admin123'},
+    {user:'doctor', pass:'doctor123'},
+    {user:'clinic', pass:'clinic2024'}
+  ];
+  const ok = VALID_USERS.some(u=>u.user===username && u.pass===password);
+  if(ok){
+    if(errorEl) errorEl.textContent='';
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('appContent').style.display='block';
+    // حفظ الحالة
+    localStorage.setItem('clinic_logged_in','1');
+  }else{
+    if(errorEl) errorEl.textContent='اسم المستخدم أو كلمة المرور غير صحيحة';
+  }
+}
+document.getElementById('loginForm').addEventListener('submit', doLogin);
+// التحقق من جلسة(previous login)
+window.addEventListener('DOMContentLoaded', function(){
+  if(localStorage.getItem('clinic_logged_in')==='1'){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('appContent').style.display='block';
+  }
+});
+
+// ===== تبديل القائمة الجانبية (موبايل) =====
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ===== عرض تاريخ اليوم =====
+(function(){
+  const now = new Date();
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const dateStr = days[now.getDay()] + '، ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+  document.getElementById('todayDate').textContent = dateStr;
+})();
+
+/* ============================================================
+   نظام الحجوزات الأسبوعي التفاعلي
+   ============================================================ */
+
+// ===== تخزين الحجوزات في localStorage (بديل قاعدة البيانات في الوضع التجريبي) =====
+const APPT_STORAGE_KEY = 'clinic_appointments_v1';
+const PATIENTS_STORAGE_KEY = 'clinic_patients_v1';
+const DOCTORS_STORAGE_KEY = 'clinic_doctors_v1';
+
+// بيانات أولية تجريبية
+const DEFAULT_PATIENTS = [
+  {id:'P-0001', name:'أحمد محمد علي', age:45, phone:'07701234567'},
+  {id:'P-0002', name:'فاطمة حسن كريم', age:32, phone:'07709876543'},
+  {id:'P-0003', name:'علي كريم جاسم', age:28, phone:'07701112233'},
+  {id:'P-0004', name:'زينب عبدالله سعد', age:50, phone:'07704445566'}
+];
+const DEFAULT_DOCTORS = [
+  {id:'D-0001', name:'د. سارة علي', specialty:'باطنية'},
+  {id:'D-0002', name:'د. خالد عمر', specialty:'أسنان'},
+  {id:'D-0003', name:'د. محمد ناصر', specialty:'قلب'},
+  {id:'D-0004', name:'د. ليلى حسن', specialty:'أطفال'}
+];
+
+// حالة التقويم
+let currentWeekOffset = 0; // 0 = هذا الأسبوع، -1 = السابق، 1 = القادم
+
+// ===== دوال التخزين =====
+function loadAppointments(){
+  try{
+    const data = localStorage.getItem(APPT_STORAGE_KEY);
+    if(data) return JSON.parse(data);
+  }catch(e){}
+  return [];
+}
+function saveAppointments(list){
+  try{ localStorage.setItem(APPT_STORAGE_KEY, JSON.stringify(list)); }catch(e){}
+}
+function loadPatients(){
+  try{
+    const data = localStorage.getItem(PATIENTS_STORAGE_KEY);
+    if(data) return JSON.parse(data);
+  }catch(e){}
+  return DEFAULT_PATIENTS;
+}
+function loadDoctors(){
+  try{
+    const data = localStorage.getItem(DOCTORS_STORAGE_KEY);
+    if(data) return JSON.parse(data);
+  }catch(e){}
+  return DEFAULT_DOCTORS;
+}
+
+// ===== توليد رقم حجز تلقائي =====
+function nextBookingCode(){
+  const list = loadAppointments();
+  let max = 0;
+  list.forEach(a=>{
+    const m = a.code.match(/B-(\d+)/);
+    if(m) max = Math.max(max, parseInt(m[1]));
+  });
+  return 'B-' + String(max+1).padStart(4,'0');
+}
+
+// ===== دوال التاريخ =====
+function toISODate(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getWeekStart(offset){
+  const now = new Date();
+  const day = now.getDay(); // 0=الأحد
+  const diff = day - 0; // الأحد بداية الأسبوع
+  const start = new Date(now);
+  start.setDate(now.getDate() - diff + offset*7);
+  start.setHours(0,0,0,0);
+  return start;
+}
+const DAY_NAMES = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MONTH_NAMES = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+// ===== حالة الموعد =====
+const STATUS_CLASS = {
+  'محجوز':'reserved',
+  'مؤكد':'confirmed',
+  'مكتمل':'completed',
+  'ملغي':'cancelled',
+  'لم يحضر':'no-show'
+};
+
+// ===== تهيئة التقويم الأسبوعي =====
+function initWeekCalendar(){
+  renderWeekCalendar();
+}
+
+// ===== التنقل بين الأسابيع =====
+function moveWeek(dir){
+  if(dir===0) currentWeekOffset = 0;
+  else currentWeekOffset += dir;
+  renderWeekCalendar();
+}
+
+// ===== عرض التقويم الأسبوعي =====
+function renderWeekCalendar(){
+  const grid = document.getElementById('weekGrid');
+  const title = document.getElementById('weekTitle');
+  if(!grid) return;
+
+  const start = getWeekStart(currentWeekOffset);
+  const appointments = loadAppointments();
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+
+  // عنوان الأسبوع
+  const end = new Date(start);
+  end.setDate(start.getDate()+6);
+  title.textContent = 'أسبوع ' + start.getDate() + ' ' + MONTH_NAMES[start.getMonth()] + ' — ' + end.getDate() + ' ' + MONTH_NAMES[end.getMonth()] + ' ' + end.getFullYear();
+
+  let html = '';
+  for(let i=0; i<7; i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    const iso = toISODate(d);
+    const dayAppts = appointments.filter(a=>a.date===iso && a.status!=='ملغي');
+    const isToday = iso === toISODate(new Date());
+
+    html += `<div class="week-day ${dayAppts.length>0?'has-appointments':''}" id="day-${iso}">`;
+    html += `<div class="week-day-header">
+      <div class="week-day-name">${DAY_NAMES[i]}${isToday?' (اليوم)':''}</div>
+      <div class="week-day-date">${d.getDate()} ${MONTH_NAMES[d.getMonth()]}</div>
+    </div>`;
+
+    if(dayAppts.length===0){
+      html += `<div class="empty-state" style="padding:20px 10px"><span>🕐</span>لا توجد حجوزات</div>`;
+    }else{
+      // ترتيب حسب الوقت
+      dayAppts.sort((a,b)=>a.time.localeCompare(b.time));
+      dayAppts.forEach(a=>{
+        const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||'مريض'};
+        const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||'طبيب'};
+        const cls = STATUS_CLASS[a.status] || 'reserved';
+        html += `<div class="appointment-slot ${cls}" onclick="openAppointmentDetails('${a.code}')">
+          <div class="appointment-time">🕐 ${a.time}</div>
+          <div class="appointment-patient">👤 ${patient.name}</div>
+          <div class="appointment-doctor">🩺 ${doctor.name}</div>
+          <span class="appointment-status">${a.status}</span>
+          <div class="appointment-actions" onclick="event.stopPropagation()">
+            <button class="btn-edit" onclick="openMoveAppointment('${a.code}')">↔️ نقل</button>
+            <button class="btn-complete" onclick="markAppointmentComplete('${a.code}')">✓</button>
+            <button class="btn-cancel" onclick="cancelAppointment('${a.code}')">✕</button>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// ===== فتح تفاصيل الحجز في نافذة داخلية =====
+function openAppointmentDetails(code){
+  const appointments = loadAppointments();
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+  const a = appointments.find(x=>x.code===code);
+  if(!a){ alert('الحجز غير موجود'); return; }
+  const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||'مريض', phone:'—'};
+  const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||'طبيب', specialty:'—'};
+
+  const html = `
+    <div style="padding:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="color:var(--navy)">تفاصيل الحجز ${a.code}</h3>
+        <span class="badge ${a.status==='مؤكد'?'blue':a.status==='مكتمل'?'green':a.status==='ملغي'?'red':a.status==='لم يحضر'?'amber':'blue'}">${a.status}</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px">
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">المريض</td><td style="padding:8px;border-bottom:1px solid var(--border)">${patient.name} (${a.patientId})</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">هاتف المريض</td><td style="padding:8px;border-bottom:1px solid var(--border)">${patient.phone}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">الطبيب</td><td style="padding:8px;border-bottom:1px solid var(--border)">${doctor.name} (${a.doctorId}) — ${doctor.specialty}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">التاريخ</td><td style="padding:8px;border-bottom:1px solid var(--border)">${a.date}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">الوقت</td><td style="padding:8px;border-bottom:1px solid var(--border)">${a.time}</td></tr>
+        <tr><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted)">السبب</td><td style="padding:8px;border-bottom:1px solid var(--border)">${a.reason||'—'}</td></tr>
+        <tr><td style="padding:8px;color:var(--muted)">الحالة</td><td style="padding:8px">${a.status}</td></tr>
+      </table>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button class="btn btn-outline" onclick="closeModal('appointmentDetailModal')">إغلاق</button>
+        <button class="btn btn-primary" onclick="closeModal('appointmentDetailModal');openMoveAppointment('${a.code}')">↔️ نقل الحجز</button>
+        ${a.status!=='مكتمل' ? `<button class="btn btn-primary" style="background:var(--green)" onclick="closeModal('appointmentDetailModal');markAppointmentComplete('${a.code}')">✓ إكمال وربط بزيارة</button>` : ''}
+      </div>
+    </div>`;
+
+  // إنشاء نافذة داخلية
+  let modal = document.getElementById('appointmentDetailModal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'appointmentDetailModal';
+    modal.style.cssText = 'position:fixed;top:0;right:0;left:0;bottom:0;background:rgba(15,42,74,.5);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)';
+    modal.innerHTML = `<div style="background:var(--white);border-radius:16px;padding:24px;max-width:520px;width:92%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)"></div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+  modal.querySelector('div').innerHTML = html;
+}
+
+// ===== إغلاق النافذة الداخلية =====
+function closeModal(id){
+  const m = document.getElementById(id);
+  if(m) m.style.display = 'none';
+}
+
+// ===== فتح نافذة نقل الحجز =====
+function openMoveAppointment(code){
+  const appointments = loadAppointments();
+  const a = appointments.find(x=>x.code===code);
+  if(!a) return;
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+  const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||'مريض'};
+  const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||'طبيب'};
+
+  // توليد خيارات الأيام (7 أيام من اليوم)
+  const start = getWeekStart(0);
+  let dayOptions = '';
+  for(let i=0; i<7; i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    const iso = toISODate(d);
+    dayOptions += `<option value="${iso}" ${iso===a.date?'selected':''}>${DAY_NAMES[i]} ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}</option>`;
+  }
+
+  // توليد خيارات الوقت (من 08:00 إلى 17:00 كل 30 دقيقة)
+  let timeOptions = '';
+  for(let h=8; h<17; h++){
+    for(let m=0; m<60; m+=30){
+      const t = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+      timeOptions += `<option value="${t}" ${t===a.time?'selected':''}>${t}</option>`;
+    }
+  }
+
+  const html = `
+    <div style="padding:10px">
+      <h3 style="color:var(--navy);margin-bottom:16px">↔️ نقل الحجز ${a.code}</h3>
+      <div style="background:var(--sky-soft);padding:12px;border-radius:10px;margin-bottom:16px;font-size:13px">
+        <div>👤 المريض: <strong>${patient.name}</strong></div>
+        <div>🩺 الطبيب: <strong>${doctor.name}</strong></div>
+        <div>📅 الحالي: <strong>${a.date} الساعة ${a.time}</strong></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>اليوم الجديد <span class="req">*</span></label><select id="moveDay">${dayOptions}</select></div>
+        <div class="field"><label>الوقت الجديد <span class="req">*</span></label><select id="moveTime">${timeOptions}</select></div>
+      </div>
+      <div class="alert error" id="moveError" style="display:none"></div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeModal('appointmentMoveModal')">إلغاء</button>
+        <button class="btn btn-primary" onclick="confirmMoveAppointment('${a.code}')">✓ تأكيد النقل</button>
+      </div>
+    </div>`;
+
+  let modal = document.getElementById('appointmentMoveModal');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'appointmentMoveModal';
+    modal.style.cssText = 'position:fixed;top:0;right:0;left:0;bottom:0;background:rgba(15,42,74,.5);z-index:1001;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)';
+    modal.innerHTML = `<div style="background:var(--white);border-radius:16px;padding:24px;max-width:480px;width:92%;box-shadow:0 20px 60px rgba(0,0,0,.3)"></div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+  modal.querySelector('div').innerHTML = html;
+}
+
+// ===== تأكيد نقل الحجز مع التحقق من التعارض =====
+function confirmMoveAppointment(code){
+  const day = document.getElementById('moveDay').value;
+  const time = document.getElementById('moveTime').value;
+  if(!day || !time){ showWeekAlert('يرجى اختيار اليوم والوقت الجديد','error'); return; }
+
+  const appointments = loadAppointments();
+  const a = appointments.find(x=>x.code===code);
+  if(!a) return;
+
+  // التحقق من تعارض مواعيد الطبيب
+  const conflict = appointments.find(x=>
+    x.code!==code &&
+    x.doctorId===a.doctorId &&
+    x.date===day &&
+    x.time===time &&
+    x.status!=='ملغي'
+  );
+  if(conflict){
+    document.getElementById('moveError').style.display='block';
+    document.getElementById('moveError').textContent = '⚠️ تعارض: الطبيب لديه حجز آخر في هذا اليوم والوقت ('+conflict.code+')';
+    return;
+  }
+
+  a.date = day;
+  a.time = time;
+  saveAppointments(appointments);
+  closeModal('appointmentMoveModal');
+  showWeekAlert('تم نقل الحجز '+code+' إلى '+day+' الساعة '+time+' بنجاح ✓','success');
+  renderWeekCalendar();
+  refreshAppointmentTable();
+}
+
+// ===== إلغاء الحجز =====
+function cancelAppointment(code){
+  if(!confirm('هل تريد إلغاء الحجز '+code+'؟')) return;
+  const appointments = loadAppointments();
+  const a = appointments.find(x=>x.code===code);
+  if(a){
+    a.status = 'ملغي';
+    saveAppointments(appointments);
+  }
+  showWeekAlert('تم إلغاء الحجز '+code+' ✓','success');
+  renderWeekCalendar();
+  refreshAppointmentTable();
+}
+
+// ===== إكمال الحجز وربطه بزيارة طبية =====
+function markAppointmentComplete(code){
+  if(!confirm('هل تريد إكمال الحجز '+code+' وربطه بزيارة طبية جديدة؟')) return;
+  const appointments = loadAppointments();
+  const a = appointments.find(x=>x.code===code);
+  if(a){
+    a.status = 'مكتمل';
+    a.visitLinked = true;
+    saveAppointments(appointments);
+  }
+  showWeekAlert('تم إكمال الحجز '+code+' وربطه بزيارة طبية ✓','success');
+  renderWeekCalendar();
+  refreshAppointmentTable();
+}
+
+// ===== إضافة حجز جديد (من التقويم) =====
+function addAppointmentFromCalendar(patientId, doctorId, date, time, reason){
+  const appointments = loadAppointments();
+  // التحقق من التعارض
+  const conflict = appointments.find(x=>
+    x.doctorId===doctorId && x.date===date && x.time===time && x.status!=='ملغي'
+  );
+  if(conflict){
+    showWeekAlert('⚠️ تعارض: الطبيب لديه حجز في هذا اليوم والوقت','error');
+    return false;
+  }
+  const code = nextBookingCode();
+  appointments.push({
+    code: code,
+    patientId: patientId,
+    doctorId: doctorId,
+    date: date,
+    time: time,
+    reason: reason || '',
+    status: 'محجوز',
+    createdAt: new Date().toISOString()
+  });
+  saveAppointments(appointments);
+  showWeekAlert('تم إضافة الحجز '+code+' بنجاح ✓','success');
+  renderWeekCalendar();
+  refreshAppointmentTable();
+  return true;
+}
+
+// ===== حفظ حجز من النموذج الحالي (تحديث saveAppointment) =====
+function saveAppointmentFromForm(){
+  const patient = document.getElementById('aPatient').value;
+  const doctor = document.getElementById('aDoctor').value;
+  const date = document.getElementById('aDate').value;
+  const time = document.getElementById('aTime').value;
+  const reason = document.getElementById('aReason') ? document.getElementById('aReason').value : '';
+  const status = document.getElementById('aStatus') ? document.getElementById('aStatus').value : 'محجوز';
+
+  if(!patient){ showAlert('appointmentAlert','يرجى اختيار المريض','error'); return; }
+  if(!doctor){ showAlert('appointmentAlert','يرجى اختيار الطبيب','error'); return; }
+  if(!date || !time){ showAlert('appointmentAlert','يرجى تحديد تاريخ ووقت الموعد','error'); return; }
+
+  // استخراج الـ ID من النص (مثل "P-0001 - أحمد محمد علي")
+  const patientId = patient.split(' - ')[0];
+  const doctorId = doctor.split(' - ')[0];
+
+  const appointments = loadAppointments();
+  const conflict = appointments.find(x=>
+    x.doctorId===doctorId && x.date===date && x.time===time && x.status!=='ملغي'
+  );
+  if(conflict){
+    showAlert('appointmentAlert','⚠️ تعارض: الطبيب لديه حجز في هذا اليوم والوقت ('+conflict.code+')','error');
+    return;
+  }
+
+  const code = nextBookingCode();
+  appointments.push({
+    code: code,
+    patientId: patientId,
+    doctorId: doctorId,
+    date: date,
+    time: time,
+    reason: reason,
+    status: status,
+    createdAt: new Date().toISOString()
+  });
+  saveAppointments(appointments);
+  showAlert('appointmentAlert','تم حفظ الحجز '+code+' بنجاح ✓','success');
+  clearForm('appointmentForm');
+  refreshAppointmentTable();
+  renderWeekCalendar();
+}
+
+// ===== تحديث جدول الحجوزات =====
+function refreshAppointmentTable(){
+  const table = document.getElementById('appointmentTable');
+  if(!table) return;
+  const appointments = loadAppointments();
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+  const tbody = table.querySelector('tbody');
+  if(appointments.length===0){
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">لا توجد حجوزات بعد</td></tr>';
+    return;
+  }
+  // ترتيب حسب التاريخ ثم الوقت
+  appointments.sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
+  let html = '';
+  appointments.forEach(a=>{
+    const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||'مريض'};
+    const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||'طبيب'};
+    const badgeClass = a.status==='مؤكد'?'blue':a.status==='مكتمل'?'green':a.status==='ملغي'?'red':a.status==='لم يحضر'?'amber':'blue';
+    html += `<tr>
+      <td>${a.code}</td>
+      <td>${patient.name}</td>
+      <td>${doctor.name}</td>
+      <td>${a.date}</td>
+      <td>${a.time}</td>
+      <td>${a.reason||'—'}</td>
+      <td><span class="badge ${badgeClass}">${a.status}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick="openAppointmentDetails('${a.code}')">عرض</button></td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+}
+
+// ===== عرض تنبيه التقويم =====
+function showWeekAlert(msg, type){
+  const el = document.getElementById('weekAlert');
+  if(!el) return;
+  el.className = 'alert show ' + type;
+  el.textContent = msg;
+  setTimeout(()=>el.classList.remove('show'), 3500);
+}
+
+// ===== تقرير الحجوزات اليومي/الأسبوعي =====
+function printAppointmentReport(scope){
+  const appointments = loadAppointments();
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+  const today = toISODate(new Date());
+  const start = getWeekStart(0);
+  const end = new Date(start);
+  end.setDate(start.getDate()+6);
+
+  let filtered;
+  if(scope==='daily'){
+    filtered = appointments.filter(a=>a.date===today);
+  }else{
+    filtered = appointments.filter(a=>{
+      const d = new Date(a.date);
+      return d>=start && d<=end;
+    });
+  }
+  filtered.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+
+  let rows = '';
+  filtered.forEach(a=>{
+    const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||'مريض'};
+    const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||'طبيب'};
+    rows += `<tr><td>${a.code}</td><td>${patient.name}</td><td>${doctor.name}</td><td>${a.date}</td><td>${a.time}</td><td>${a.status}</td></tr>`;
+  });
+
+  const title = scope==='daily' ? 'تقرير الحجوزات اليومي — '+today : 'تقرير الحجوزات الأسبوعي — '+toISODate(start)+' إلى '+toISODate(end);
+  const win = window.open('', '_blank');
+  win.document.write(`<html dir="rtl" lang="ar"><head><meta charset="UTF-8"><title>${title}</title>
+    <style>body{font-family:'Cairo',Tahoma,sans-serif;padding:30px;color:#1c2b3a}
+    h2{color:#0f2a4a;text-align:center;margin-bottom:5px}
+    .sub{text-align:center;color:#6b7a8d;margin-bottom:20px;font-size:13px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{background:#0f2a4a;color:#fff;padding:10px;text-align:right}
+    td{padding:8px;border-bottom:1px solid #e2e8f0}
+    tr:nth-child(even){background:#f4f7fb}
+    .total{text-align:center;margin-top:20px;font-weight:bold;color:#0f2a4a}
+    @media print{button{display:none}}</style></head><body>
+    <h2>نظام إدارة وأتمتة العيادة الطبية</h2>
+    <div class="sub">${title}</div>
+    <table><thead><tr><th>رقم الحجز</th><th>المريض</th><th>الطبيب</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th></tr></thead>
+    <tbody>${rows||'<tr><td colspan="6" style="text-align:center">لا توجد حجوزات</td></tr>'}</tbody></table>
+    <div class="total">إجمالي الحجوزات: ${filtered.length}</div>
+    <div style="text-align:center;margin-top:20px"><button onclick="window.print()">🖨️ طباعة</button></div>
+    </body></html>`);
+  win.document.close();
+}
+
+// ===== حذف سجل من الأرشيف =====
+function deleteArchive(code){
+  if(!confirm(`هل أنت متأكد من حذف السجل ${code} من الأرشيف؟`)){
+    return;
+  }
+  const archive = loadArchive();
+  const updated = archive.filter(a => a.code !== code);
+  localStorage.setItem('clinic_archive', JSON.stringify(updated));
+  document.getElementById('archiveAlert').innerHTML = `<div class="alert success">🗑️ تم حذف السجل ${code} من الأرشيف</div>`;
+  refreshArchiveTable();
+}
+
+// ===== تعديل حجز =====
+function editAppointment(code){
+  const appointments = loadAppointments();
+  const appointment = appointments.find(a => a.code === code);
+  if(!appointment){
+    alert('الحجز غير موجود');
+    return;
+  }
+  document.getElementById('aPatient').value = appointment.patientId;
+  document.getElementById('aDoctor').value = appointment.doctorId;
+  document.getElementById('aDate').value = appointment.date;
+  document.getElementById('aTime').value = appointment.time;
+  document.getElementById('aReason').value = appointment.reason;
+  document.getElementById('aStatus').value = appointment.status;
+  document.getElementById('appointmentAlert').innerHTML = `<div class="alert info">⚙️ تعديل بيانات الحجز ${code}</div>`;
+  switchTab('appointments','addAppointment');
+}
+
+// ===== حذف حجز =====
+function deleteAppointment(code){
+  if(!confirm(`هل أنت متأكد من حذف الحجز ${code}؟`)){
+    return;
+  }
+  let appointments = loadAppointments();
+  appointments = appointments.filter(a => a.code !== code);
+  localStorage.setItem('clinic_appointments', JSON.stringify(appointments));
+  document.getElementById('appointmentAlert').innerHTML = `<div class="alert success">🗑️ تم حذف الحجز ${code}</div>`;
+  refreshAppointmentTable();
+}
+
+// ===== تعديل حالة مرضية =====
+function editCondition(id){
+  const conditions = loadConditions();
+  const condition = conditions.find(c => c.id === id);
+  if(!condition){
+    alert('الحالة غير موجودة');
+    return;
+  }
+  document.getElementById('cPatient').value = condition.patientId;
+  document.getElementById('cDate').value = condition.date;
+  document.getElementById('cDiagnosis').value = condition.diagnosis;
+  document.getElementById('cStatus').value = condition.status;
+  document.getElementById('cNotes').value = condition.notes;
+  document.getElementById('conditionAlert').innerHTML = `<div class="alert info">⚙️ تعديل بيانات الحالة ${id}</div>`;
+  switchTab('conditions','addCondition');
+}
+
+// ===== حذف حالة مرضية =====
+function deleteCondition(id){
+  if(!confirm(`هل أنت متأكد من حذف الحالة ${id}؟`)){
+    return;
+  }
+  let conditions = loadConditions();
+  conditions = conditions.filter(c => c.id !== id);
+  localStorage.setItem('clinic_conditions', JSON.stringify(conditions));
+  document.getElementById('conditionAlert').innerHTML = `<div class="alert success">🗑️ تم حذف الحالة ${id}</div>`;
+  refreshConditionTable();
+}
+
+// ===== تعديل زيارة طبية =====
+function editVisit(id){
+  const visits = loadVisits();
+  const visit = visits.find(v => v.id === id);
+  if(!visit){
+    alert('الزيارة غير موجودة');
+    return;
+  }
+  document.getElementById('vPatient').value = visit.patientId;
+  document.getElementById('vDoctor').value = visit.doctorId;
+  document.getElementById('vDate').value = visit.date;
+  document.getElementById('vTime').value = visit.time;
+  document.getElementById('vReason').value = visit.reason;
+  document.getElementById('vDiagnosis').value = visit.diagnosis;
+  document.getElementById('vTreatment').value = visit.treatment;
+  document.getElementById('vNotes').value = visit.notes;
+  document.getElementById('visitAlert').innerHTML = `<div class="alert info">⚙️ تعديل بيانات الزيارة ${id}</div>`;
+  switchTab('visits','addVisit');
+}
+
+// ===== حذف زيارة طبية =====
+function deleteVisit(id){
+  if(!confirm(`هل أنت متأكد من حذف الزيارة ${id}؟`)){
+    return;
+  }
+  let visits = loadVisits();
+  visits = visits.filter(v => v.id !== id);
+  localStorage.setItem('clinic_visits', JSON.stringify(visits));
+  document.getElementById('visitAlert').innerHTML = `<div class="alert success">🗑️ تم حذف الزيارة ${id}</div>`;
+  refreshVisitTable();
+}
+
+// ===== تعديل طبيب =====
+function editDoctor(id){
+  const doctors = loadDoctors();
+  const doctor = doctors.find(d => d.id === id);
+  if(!doctor){
+    alert('الطبيب غير موجود');
+    return;
+  }
+  document.getElementById('dName').value = doctor.name;
+  document.getElementById('dSpecialty').value = doctor.specialty;
+  document.getElementById('dPhone').value = doctor.phone;
+  document.getElementById('dSchedule').value = doctor.schedule;
+  document.getElementById('dStatus').value = doctor.status;
+  document.getElementById('dNotes').value = doctor.notes;
+  document.getElementById('doctorAlert').innerHTML = `<div class="alert info">⚙️ تعديل بيانات الطبيب ${id}</div>`;
+  switchTab('doctors','addDoctor');
+}
+
+// ===== حذف طبيب =====
+function deleteDoctor(id){
+  if(!confirm(`هل أنت متأكد من حذف الطبيب ${id}؟`)){
+    return;
+  }
+  let doctors = loadDoctors();
+  doctors = doctors.filter(d => d.id !== id);
+  localStorage.setItem('clinic_doctors', JSON.stringify(doctors));
+  document.getElementById('doctorAlert').innerHTML = `<div class="alert success">🗑️ تم حذف الطبيب ${id}</div>`;
+  refreshDoctorTable();
+}
+
+// ===== تعديل مريض =====
+function editPatient(id){
+  const patients = loadPatients();
+  const patient = patients.find(p => p.id === id);
+  if(!patient){
+    alert('المريض غير موجود');
+    return;
+  }
+  document.getElementById('pName').value = patient.name;
+  document.getElementById('pBirth').value = patient.birth;
+  document.getElementById('pAge').value = patient.age;
+  document.getElementById('pGender').value = patient.gender;
+  document.getElementById('pPhone').value = patient.phone;
+  document.getElementById('pAddress').value = patient.address;
+  document.getElementById('pEmail').value = patient.email;
+  document.getElementById('pBlood').value = patient.blood;
+  document.getElementById('pNotes').value = patient.notes;
+  document.getElementById('patientAlert').innerHTML = `<div class="alert info">⚙️ تعديل بيانات المريض ${id}</div>`;
+  switchTab('patients','addPatient');
+}
+
+// ===== حذف مريض =====
+function deletePatient(id){
+  if(!confirm(`هل أنت متأكد من حذف المريض ${id}؟`)){
+    return;
+  }
+  let patients = loadPatients();
+  patients = patients.filter(p => p.id !== id);
+  localStorage.setItem('clinic_patients', JSON.stringify(patients));
+  document.getElementById('patientAlert').innerHTML = `<div class="alert success">🗑️ تم حذف المريض ${id}</div>`;
+  refreshPatientTable();
+}
+
+// ===== دوال مساعدة للتحميل والتحديث =====
+function loadVisits(){
+  try{ return JSON.parse(localStorage.getItem('clinic_visits')) || []; }
+  catch(e){ return []; }
+}
+function loadConditions(){
+  try{ return JSON.parse(localStorage.getItem('clinic_conditions')) || []; }
+  catch(e){ return []; }
+}
+function loadArchive(){
+  try{ return JSON.parse(localStorage.getItem('clinic_archive')) || []; }
+  catch(e){ return []; }
+}
+function refreshPatientTable(){
+  const tbody = document.querySelector('#page-patients tbody');
+  if(!tbody) return;
+  const patients = loadPatients();
+  if(patients.length === 0) return;
+  tbody.innerHTML = patients.map(p => `
+    <tr>
+      <td>${p.id}</td><td>${p.name}</td><td>${p.age||''}</td><td>${p.gender||''}</td>
+      <td>${p.phone||''}</td><td>${p.date||''}</td>
+      <td class="row-actions">
+        <button class="btn btn-outline btn-sm" onclick="openPatientDetails('${p.id}')">👁️ عرض</button>
+        <button class="btn btn-outline btn-sm" onclick="editPatient('${p.id}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="deletePatient('${p.id}')">🗑️ حذف</button>
+      </td>
+    </tr>`).join('');
+}
+function refreshDoctorTable(){
+  const tbody = document.querySelector('#page-doctors tbody');
+  if(!tbody) return;
+  const doctors = loadDoctors();
+  if(doctors.length === 0) return;
+  tbody.innerHTML = doctors.map(d => `
+    <tr>
+      <td>${d.id}</td><td>${d.name}</td><td>${d.specialty||''}</td>
+      <td>${d.phone||''}</td><td>${d.schedule||''}</td><td>${d.status||''}</td>
+      <td class="row-actions">
+        <button class="btn btn-outline btn-sm" onclick="openDoctorDetails('${d.name}','${d.id}')">👁️ عرض</button>
+        <button class="btn btn-outline btn-sm" onclick="editDoctor('${d.id}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteDoctor('${d.id}')">🗑️ حذف</button>
+      </td>
+    </tr>`).join('');
+}
+function refreshVisitTable(){
+  const tbody = document.querySelector('#page-visits tbody');
+  if(!tbody) return;
+  const visits = loadVisits();
+  if(visits.length === 0) return;
+  tbody.innerHTML = visits.map(v => `
+    <tr>
+      <td>${v.id}</td><td>${v.patientName||v.patientId}</td><td>${v.doctorName||v.doctorId}</td>
+      <td>${v.date}</td><td>${v.reason||''}</td><td>${v.status||''}</td>
+      <td class="row-actions">
+        <button class="btn btn-outline btn-sm" onclick="openVisitDetails('${v.id}')">👁️ عرض</button>
+        <button class="btn btn-outline btn-sm" onclick="editVisit('${v.id}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteVisit('${v.id}')">🗑️ حذف</button>
+      </td>
+    </tr>`).join('');
+}
+function refreshConditionTable(){
+  const tbody = document.querySelector('#page-conditions tbody');
+  if(!tbody) return;
+  const conditions = loadConditions();
+  if(conditions.length === 0) return;
+  tbody.innerHTML = conditions.map(c => `
+    <tr>
+      <td>${c.id}</td><td>${c.patientName||c.patientId}</td><td>${c.date}</td>
+      <td>${c.diagnosis||''}</td><td>${c.status||''}</td>
+      <td class="row-actions">
+        <button class="btn btn-outline btn-sm" onclick="openConditionDetails('${c.id}')">👁️ عرض</button>
+        <button class="btn btn-outline btn-sm" onclick="editCondition('${c.id}')">✏️ تعديل</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCondition('${c.id}')">🗑️ حذف</button>
+      </td>
+    </tr>`).join('');
+}
+function refreshArchiveTable(){
+  const tbody = document.querySelector('#page-archive tbody');
+  if(!tbody) return;
+  const archive = loadArchive();
+  if(archive.length === 0) return;
+  tbody.innerHTML = archive.map(a => `
+    <tr>
+      <td><span class="badge blue">${a.type||'سجل'}</span></td>
+      <td>${a.code}</td><td>${a.patientName||a.patientId}</td>
+      <td>${a.date}</td><td>${a.reason||''}</td>
+      <td class="row-actions">
+        <button class="btn btn-danger btn-sm" onclick="deleteArchive('${a.code}')">🗑️ حذف</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ===== البحث عن حجز بالاسم أو الرقم =====
+function searchAppointmentByQuery(q){
+  const appointments = loadAppointments();
+  const patients = loadPatients();
+  const doctors = loadDoctors();
+  const query = q.toLowerCase();
+  const results = appointments.filter(a=>{
+    const patient = patients.find(p=>p.id===a.patientId) || {name:a.patientName||''};
+    const doctor = doctors.find(d=>d.id===a.doctorId) || {name:a.doctorName||''};
+    return a.code.toLowerCase().includes(query) ||
+           patient.name.toLowerCase().includes(query) ||
+           a.patientId.toLowerCase().includes(query) ||
+           doctor.name.toLowerCase().includes(query);
+  });
+  return results;
+}
+
+// ===== تهيئة عند فتح الصفحة =====
+// ربط زر حفظ الحجز بالنظام الجديد
+document.addEventListener('DOMContentLoaded', function(){
+  // تحديث قوائم المرضى والأطباء في نموذج الحجز
+  const pSel = document.getElementById('aPatient');
+  const dSel = document.getElementById('aDoctor');
+  if(pSel){
+    const patients = loadPatients();
+    pSel.innerHTML = '<option value="">اختر مريض...</option>' + patients.map(p=>`<option value="${p.id} - ${p.name}">${p.id} - ${p.name}</option>`).join('');
+  }
+  if(dSel){
+    const doctors = loadDoctors();
+    dSel.innerHTML = '<option value="">اختر طبيب...</option>' + doctors.map(d=>`<option value="${d.id} - ${d.name}">${d.id} - ${d.name}</option>`).join('');
+  }
+  // تحديث جدول الحجوزات
+  refreshAppointmentTable();
+});
+</script>
+</body>
+</html>
